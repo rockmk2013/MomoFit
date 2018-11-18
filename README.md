@@ -20,14 +20,14 @@ cd Momofit
 python manage.py runserver
 ```
 
-##4. 更新專案
+## 4. 更新專案
 fork下來專案後，後續想更新專案最新進度，可使用push指令更新自己的github
 ```
 git add .
 git commit -m "edit content"
 git push
 ```
-##5. 更新線上專案
+## 5. 更新線上專案
 使用pull request
 https://gitbook.tw/chapters/github/pull-request.html
 
