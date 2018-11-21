@@ -1,4 +1,8 @@
 #environment
 myvenv
+venv
+
 #cache
 \_\_pycache\_\_
+
+.idea
