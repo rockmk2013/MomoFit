@@ -22,5 +22,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('momofit/', include('momofit.urls')),
-] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('momofit/', include('django.contrib.auth.urls')),
+    path('momofit/', include('momofit.urls')),
+    path('', RedirectView.as_view(url='/momofit/login/', permanent=True)),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
