@@ -4,5 +4,7 @@ venv
 
 #cache
 \_\_pycache\_\_
+__pycache__/
 
+#IDE
 .idea
