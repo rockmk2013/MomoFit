@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'momomywife',                       # Or path to database file if using sqlite3.
+        'NAME': 'momofit',                       # Or path to database file if using sqlite3.
         'USER': 'root',                       # Not used with sqlite3.
         'PASSWORD': '9527',               # Not used with sqlite3.
         'HOST': '140.119.19.167',                           # Set to empty string for localhost. Not used with sqlite3.
@@ -125,3 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_REDIRECT_URL = '/momofit/profile/'
+LOGOUT_REDIRECT_URL = '/momofit/login/'
+AUTH_USER_MODEL = 'momofit.CustomUser'
