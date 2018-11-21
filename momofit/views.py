@@ -10,9 +10,6 @@ class SignUp(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
 
-def index(request):
-
-    return render(request, 'index.html', context=context)
 
 def Hello_momo(request):
 
