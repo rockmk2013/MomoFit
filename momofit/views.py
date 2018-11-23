@@ -12,8 +12,14 @@ class SignUp(generic.CreateView):
 
 
 def Hello_momo(request):
-
-    context = {
-        "hihi":"yoyo"
-    }
+    if request.user.is_authenticated:
+        print(request.user.kcal)
+        context = {
+            "name": request.user.username,
+            "age": request.user.age,
+            "sex": request.user.sex,
+            "height": request.user.height,
+            "weight": request.user.weight,
+            "kcal": request.user.kcal
+        }
     return render(request, 'profile.html', context=context)
