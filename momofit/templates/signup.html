@@ -1,5 +1,4 @@
 {% extends "base_generic.html" %}
-
 {% block sidebar %}{% endblock %}
 
 {% block content %}
@@ -7,6 +6,7 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn">Sign up</button>
+    <a href="{% url 'login' %}">已經有帳號？</a><br><br>
+    <button type="submit" class="btn waves-effect">註冊</button>
   </form>
 {% endblock %}
