@@ -1,17 +1,7 @@
 {% extends "base_generic.html" %}
-<head>
-    {% block title %}<title>momofit</title>{% endblock %}
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-    <script type="text/javascript" src="{% static 'jquery-3.3.1.js' %}"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-</head>
-<body>
 {% block content %}
-  {% if user.is_authenticated %}
+  <!-- {% if user.is_authenticated %} -->
+    {% load static %}
     <h2>個人資料</h2>
       <div class = "info-content">
         {% csrf_token %}
@@ -19,7 +9,7 @@
           <img src="{% static 'img/momo.jpg' %}" class="user-selfie-style">
         </div>
         <div class = "information" style="width:80%;">
-          <button type="submit" class="btn">修改個人資料</button>
+          <button type="submit" class="btn waves-effect">修改個人資料</button>
           <h5>姓名: {{ name }}</h5>
           <h5>性別: {{ sex }}</h5>
           <h5>年齡: {{ age }}</h5>
@@ -39,9 +29,8 @@
         <h2>Graph-2</h2> 
         </div>
       </div>  
-  {% else %}
-    <h2>您尚未登入!</h2> 
-  {% endif %}  
+  <!-- {% else %} -->
+    <!-- <h2>您尚未登入!</h2>  -->
+  <!-- {% endif %}   -->
 
 {% endblock %}
-</body>

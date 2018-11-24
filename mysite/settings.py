@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'momofit',                       # Or path to database file if using sqlite3.
+        'NAME': 'momofitfit',                       # Or path to database file if using sqlite3.
         'USER': 'root',                       # Not used with sqlite3.
         'PASSWORD': '9527',               # Not used with sqlite3.
         'HOST': '140.119.19.167',                           # Set to empty string for localhost. Not used with sqlite3.
@@ -110,9 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh_Hant'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Taipei'
 
 USE_I18N = True
 
@@ -127,5 +127,5 @@ USE_TZ = True
 STATIC_URL = '/momofit/static/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL = '/momofit/profile/'
-LOGOUT_REDIRECT_URL = '/momofit/login/'
-AUTH_USER_MODEL = 'momofit.CustomUser'
+LOGOUT_REDIRECT_URL = '/'
+AUTH_USER_MODEL = 'momofit.User'
