@@ -9,20 +9,20 @@ from django.contrib.auth import authenticate, login
 
 class SignUp(generic.CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('login')
     template_name = 'signup.html'
 
 @login_required(login_url='/momofit/login/') 
 def Hello_momo(request):
     if request.user.is_authenticated:
-        print(request.user.kcal)
+        # print(request.user.kcal)
         context = {
             "name": request.user.username,
             "age": request.user.age,
             "sex": request.user.sex,
-            "height": request.user.height,
-            "weight": request.user.weight,
-            "kcal": request.user.kcal
+            "height": None,#request.user.height,
+            "weight": None,#request.user.weight,
+            "kcal": None#request.user.kcal 不在user裡面了換到history table裡
         }
     else:
         context = None

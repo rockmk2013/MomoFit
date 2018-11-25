@@ -2,21 +2,45 @@
 {% block sidebar %}{% endblock %}
 {% block content %}{% endblock %}
 {% block sign-in-content %}
-<div>
-想要跟momo一樣瘦嗎？
-  <div>
-  {% if user.is_authenticated %}
-    <p>您已登入</p>
-    <a href="{% url 'profile' %}">回到個人資料頁面</a>
-  {% else %}
-    <h2>登入</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <a href="{% url 'signup' %}">還沒有帳號？</a><br><br>
-      <button type="submit" class="btn waves-effect">登入</button>
-    </form>
-  {% endif %}
+{% load static %}
+<div class="row home-block block-one">
+  <div class="col s12 l7">
+    <div class="center-align slogan">
+      <h5 class=" slogan-text">想跟Twice一樣美嗎？</h5>
+      <p>Momofit是專為健人所打造的健身紀錄服務</p>
+      <p>包含飲食紀錄、健身紀錄、菜單推薦功能</p>
+      <img src="{% static 'img/twice4.png' %}" class="twice">
+    </div>
+  </div>
+  <div class="col s12 l1"></div>
+  <div class="login-container col s12 l3">
+    <div class="card">
+      <div class="card-content">
+        {% if user.is_authenticated %}
+          <span class="card-title">您已登入</span>
+          <a href="{% url 'profile' %}">回到個人資料頁面</a>
+        {% else %}
+          <span class="card-title">登入</span>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <a href="{% url 'signup' %}">還沒有帳號？</a><br><br>
+            <button type="submit" class="btn waves-effect">登入</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row home-block block-two center-align">
+  <div class="col s12 l7">
+      <h5 class="slogan-text-two">想跟Momo一樣穠纖合度嗎？</h5>
+      <p>金魚的記憶只有七秒</p>
+      <p>跟金魚是好朋友的你</p>
+      <p>就讓Momofit幫你完整紀錄健身歷程吧</p>
+  </div>
+  <div class="col s12 l5">
+    <img src="{% static 'img/momo4.png' %}" class="momo">
   </div>
 </div>
 {% endblock %}

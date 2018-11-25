@@ -2,6 +2,7 @@
 {% block sidebar %}{% endblock %}
 
 {% block content %}
+<div class="signup">
   <h2>註冊</h2>
   <form method="post">
     {% csrf_token %}
@@ -9,4 +10,5 @@
     <a href="{% url 'login' %}">已經有帳號？</a><br><br>
     <button type="submit" class="btn waves-effect">註冊</button>
   </form>
+</div>
 {% endblock %}
