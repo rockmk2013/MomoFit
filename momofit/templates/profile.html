@@ -15,8 +15,8 @@
           <h5>年齡: {{ age }}</h5>
           <h5>身高: {{ height }}</h5>
           <h5>體重:  {{ weight }}</h5>
-          <h5>體脂肪</h5>
-          <h5>三項成績(B/D/S)</h5>
+          <h5>體脂肪: {{fat}} </h5> 
+          <h5>三項成績(B/D/S): {{bench_press}}/{{Dead_lift}}/{{Squat}}</h5>
           <h5>基礎代謝: {{ kcal }}</h5>
         </div>
       </div>
@@ -24,9 +24,11 @@
       <div class = "information-chart">
         <div class = "information-chart-1">
         <h2>Graph-1</h2> 
+          <img src="{% static 'img/work_freq.jpg' %}" class="work_freq">
         </div>
         <div class = "information-chart-2">
         <h2>Graph-2</h2> 
+          <img src="{% static 'img/BDS.jpg' %}" class="BDS">
         </div>
       </div>  
   <!-- {% else %} -->
