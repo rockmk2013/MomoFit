@@ -20,9 +20,13 @@ def Hello_momo(request):
             "name": request.user.username,
             "age": request.user.age,
             "sex": request.user.sex,
-            "height": None,#request.user.height,
-            "weight": None,#request.user.weight,
-            "kcal": None#request.user.kcal 不在user裡面了換到history table裡
+            "height": None,#request.history.height,
+            "weight": None,#request.history.weight,
+            "fat" : None,
+            "bench_press" : None,
+            "Dead_lift" : None,
+            "Squat" : None,
+            "kcal": None#request.history.kcal #不在user裡面了換到history table裡
         }
     else:
         context = None
