@@ -131,9 +131,9 @@ LOGIN_REDIRECT_URL = '/momofit/profile/'
 LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'momofit.User'
 
-# import cloudinary
-# cloudinary.config( 
-#   cloud_name = "drnlrxuje", 
-#   api_key = "591415155589157", 
-#   api_secret = "m_tvcbcWOD9soAIbHQf-00Dol58" 
-# )
+import cloudinary
+cloudinary.config( 
+  cloud_name = "drnlrxuje", 
+  api_key = "591415155589157", 
+  api_secret = "m_tvcbcWOD9soAIbHQf-00Dol58" 
+)

@@ -6,7 +6,7 @@ from .models import History
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = User
-        fields = ('username', 'email','age','sex')
+        fields = ('username', 'email','age','sex','user_pic')
 
 
 class CustomUserChangeForm(UserChangeForm):

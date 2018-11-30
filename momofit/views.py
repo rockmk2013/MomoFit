@@ -9,8 +9,9 @@ from django.shortcuts import redirect
 
 def SignUp(request):
     if request.method == 'POST':
-        user_form = CustomUserCreationForm(request.POST)
+        user_form = CustomUserCreationForm(request.POST, request.FILES)
         history_form = HistoryForm(request.POST)
+        print(request.FILES)
         if all([user_form.is_valid(), history_form.is_valid()]):
             user = user_form.save()
             history = history_form.save(commit=False)

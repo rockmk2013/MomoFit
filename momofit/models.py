@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# from cloudinary.models import CloudinaryField
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -13,7 +13,7 @@ class User(AbstractUser):
         (2,'生理女性'),
     )
     sex = models.IntegerField(default=1,choices=sex_status,verbose_name="性別")
-    # user_pic = models.ImageField(upload_to="users")
+    user_pic = CloudinaryField('image',null=True)
 
     class Meta:
         db_table = 'user'

@@ -27,8 +27,10 @@
         <ul id="nav-mobile" class="right hide-on-med-and-down">
           {% if user.is_authenticated %}
             <li class="user-info">
-              {% load static %}
-              <img src="{% static 'img/user-image.jpg' %}" class="user-image-style">
+              <!-- {% load static %} -->
+              <!-- <img src="{% static 'img/user-image.jpg' %}" class="user-image-style"> -->
+              {% load cloudinary %}      
+              {% cloudinary user.user_pic format="jpg" width=120 height=120 crop="fill" class="user-image-style"%}
               {{ user.username }}
             </li>
             <li><a href="{% url 'logout' %}">登出</a></li>
