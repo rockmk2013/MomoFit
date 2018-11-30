@@ -44,7 +44,7 @@
     {% block sidebar %}
       <ul id="slide-out" class="sidenav sidenav-fixed">
         <li>
-          <a class="waves-effect" href="#!">
+          <a class="waves-effect" href="{% url 'profile' %}">
             <i class="fas fa-user"></i> 個人檔案
           </a>
         </li>
@@ -83,7 +83,10 @@
       document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.sidenav');
         var instances = M.Sidenav.init(elems);
+        $('select').formSelect();
       });
     </script>
+    {% block js-block %}
+    {% endblock%}
   </body>
 </html>

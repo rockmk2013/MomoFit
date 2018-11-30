@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+# from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -23,6 +24,7 @@ class User(AbstractUser):
 class History(models.Model):
     height = models.IntegerField(verbose_name="身高(cm)")
     weight = models.IntegerField(verbose_name="體重(kg)")
+    fat = models.FloatField(verbose_name="體脂率(%)",null=True)
     push_pr = models.IntegerField(verbose_name="胸推個人紀錄(kg)",default=15)
     squat_pr = models.IntegerField(verbose_name="深蹲個人紀錄(kg)",default=15)
     lift_pr = models.IntegerField(verbose_name="硬舉個人紀錄(kg)",default=15)

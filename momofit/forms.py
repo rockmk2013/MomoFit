@@ -1,13 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import User
-# from .models import History
+from .models import History
 
 class CustomUserCreationForm(UserCreationForm):
-
     class Meta(UserCreationForm):
         model = User
         fields = ('username', 'email','age','sex')
+
 
 class CustomUserChangeForm(UserChangeForm):
 
@@ -15,8 +15,7 @@ class CustomUserChangeForm(UserChangeForm):
         model = User
         fields = ('username', 'email','age','sex')
 
-# class registrationHistoryForm(forms.Form):
-#     # height = forms.IntegerField()
-#     class Meta:
-#         model = History
-#         fields = ('height', 'weight')
+class HistoryForm(forms.ModelForm):
+    class Meta:
+        model = History
+        fields = ('height', 'weight', 'fat', 'push_pr', 'squat_pr', 'lift_pr','actlevel')

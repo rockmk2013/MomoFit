@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'momofit.apps.MomofitConfig'
+    'momofit.apps.MomofitConfig',
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL = '/momofit/profile/'
 LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'momofit.User'
+
+# import cloudinary
+# cloudinary.config( 
+#   cloud_name = "drnlrxuje", 
+#   api_key = "591415155589157", 
+#   api_secret = "m_tvcbcWOD9soAIbHQf-00Dol58" 
+# )

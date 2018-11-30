@@ -6,7 +6,8 @@
   <h2>註冊</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ user_form.as_p }}
+    {{ history_form.as_p }}
     <a href="{% url 'login' %}">已經有帳號？</a><br><br>
     <button type="submit" class="btn waves-effect">註冊</button>
   </form>
