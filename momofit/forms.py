@@ -25,5 +25,4 @@ class MenuForm(forms.Form):
     def __init__(self, choice, *args, **kwargs):
         super(MenuForm, self).__init__(*args, **kwargs)
         self.fields['items'] = forms.MultipleChoiceField(choices=tuple([(name[0], name[1]) for name in choice]),label="菜單項目")
-        self.fields['items'].widget.attrs['class'] = 'browser-default'
     items = forms.MultipleChoiceField()
