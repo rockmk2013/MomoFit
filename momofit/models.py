@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
+from cloudinary.models import CloudinaryField
+from django.db import connection#
 # Create your models here.
 
 class User(AbstractUser):
@@ -12,7 +13,7 @@ class User(AbstractUser):
         (2,'生理女性'),
     )
     sex = models.IntegerField(default=1,choices=sex_status,verbose_name="性別")
-    # user_pic = models.ImageField(upload_to="users")
+    user_pic = CloudinaryField('image',null=True)
 
     class Meta:
         db_table = 'user'
@@ -23,10 +24,12 @@ class User(AbstractUser):
 class History(models.Model):
     height = models.IntegerField(verbose_name="身高(cm)")
     weight = models.IntegerField(verbose_name="體重(kg)")
+    fat = models.FloatField(verbose_name="體脂率(%)",null=True)
     push_pr = models.IntegerField(verbose_name="胸推個人紀錄(kg)",default=15)
     squat_pr = models.IntegerField(verbose_name="深蹲個人紀錄(kg)",default=15)
     lift_pr = models.IntegerField(verbose_name="硬舉個人紀錄(kg)",default=15)
     tdee = models.IntegerField(default=1200)
+    date = models.DateTimeField(auto_now_add=True,null=True)
 
     actlevel_status = (
         (1,'久坐'),
@@ -46,12 +49,14 @@ class History(models.Model):
     class Meta:
         db_table = 'history'
 
+
 class Menu(models.Model):
     menu_weight = models.FloatField()
     menu_set = models.IntegerField()
     menu_rep = models.CharField(max_length=5)
     items = models.ManyToManyField('ItemList')
     user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,db_column='user_id')
+    display = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'menu'
@@ -92,6 +97,12 @@ class ItemList(models.Model):
 
     def __str__(self):
         return self.item_name
+
+    def get_item_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select * from item_list where item_id not in (select menu_items.menu_id from menu_items,menu where user_id=%s and menu_items.menu_id = menu.id)",[self.id])
+        row = cursor.fetchall()
+        return row
 
 class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)

@@ -6,7 +6,8 @@
       <div class = "info-content">
         {% csrf_token %}
         <div class = "selfie"> 
-          <img src="{% static 'img/momo.jpg' %}" class="user-selfie-style">
+          {% load cloudinary %}      
+          {% cloudinary user.user_pic format="jpg" width=600 height=800 crop="fill" class="user-selfie-style"%}
         </div>
         <div class = "information" style="width:80%;">
           <button type="submit" class="btn waves-effect">修改個人資料</button>

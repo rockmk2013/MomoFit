@@ -34,7 +34,7 @@ body{
 }
 .block-content{
   margin-left: 180px;
-  margin-top: 64px;
+  margin-top: 34px;
   padding: 10px;
 }
 /* index */
@@ -105,4 +105,25 @@ body{
 .work_freq{
   width: 600px;
   height: 400px;
+}
+
+
+/* menu */
+.menu-title{
+  display: inline-block;
+}
+.btn-right,.btn-add{
+  float: right
+}
+.btn-add{
+  margin: 1.0933333333rem 5px 0 0;
+}
+#modal-menu{
+  top:4% !important;
+  height: 700px !important;
+  max-height: none !important;
+}
+.modal-title{
+  display: inline-block;
+  margin-top: 0;
 }
