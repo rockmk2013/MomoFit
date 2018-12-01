@@ -47,7 +47,13 @@ class History(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE,null=True,db_column='user_id')
     
     class Meta:
-        db_table = 'history'
+        db_table = 'history'   
+
+    def get_history(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM momofitfit.history where user_id = %s;",[self.id])
+        row = cursor.fetchall()
+        return row
 
 
 class Menu(models.Model):

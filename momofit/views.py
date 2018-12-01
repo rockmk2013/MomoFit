@@ -6,7 +6,8 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
-from .models import ItemList
+from .models import ItemList, History
+
 
 def SignUp(request):
     if request.method == 'POST':
@@ -52,17 +53,20 @@ def SignUp(request):
 def Hello_momo(request):
     if request.user.is_authenticated:
         # print(request.user.kcal)
+        history = History.get_history(request.user)
+        sex = "生理男性" if request.user.sex==1 else "生理女性"
+        #之後有多筆資料的時候可能要去改get_history的query
         context = {
             "name": request.user.username,
             "age": request.user.age,
-            "sex": request.user.sex,
-            "height": None,#request.history.height,
-            "weight": None,#request.history.weight,
-            "fat" : None,
-            "bench_press" : None,
-            "Dead_lift" : None,
-            "Squat" : None,
-            "kcal": None#request.history.kcal #不在user裡面了換到history table裡
+            "sex": sex,
+            "height": history[0][1],
+            "weight": history[0][2],
+            "fat" : history[0][9],
+            "bench_press" :  history[0][3],
+            "Dead_lift" : history[0][4],
+            "Squat" :  history[0][5],
+            "TDEE": history[0][6] #不在user裡面了換到history table裡
         }
     else:
         context = None
