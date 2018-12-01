@@ -1,0 +1,45 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<h5 class="menu-title">菜單推薦</h5><a class="btn-floating btn waves-effect waves-light modal-trigger btn-add" href="#modal-menu"><i class="material-icons">add</i></a>
+<table class="striped">
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>部位</th>
+            <th>組數</th>
+            <th>重量</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+        <td>Alvin</td>
+        <td>Eclair</td>
+        <td>$0.87</td>
+        <td>dfd</td>
+        <td><a class="btn-floating btn waves-effect waves-light btn-right"><i class="material-icons">delete</i></a></td>
+        </tr>
+    </tbody>
+</table>
+<div id="modal-menu" class="modal">
+    <div class="modal-content">
+        <h5 class="modal-title">新增菜單項目</h5>
+        <a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
+        <form method="post">
+            <!-- {% csrf_token %}
+            {{ menu_form.as_p }}
+            <button type="submit" class="btn waves-effect btn-right">完成</button> -->
+            {% for field in menu_form %}
+            <div class="fieldWrapper">
+                {% csrf_token %}
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn waves-effect btn-right">完成</button> 
+        </form>
+    </div>
+</div>
+
+{% endblock %}

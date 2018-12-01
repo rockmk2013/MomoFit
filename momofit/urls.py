@@ -8,4 +8,5 @@ urlpatterns = [
     path('profile/', views.Hello_momo, name='profile'),
     # path('signup/', views.SignUp.as_view(), name='signup'),
     path('signup/', views.SignUp, name='signup'),
+    path('menu/',views.Menu,name='menu')
 ]

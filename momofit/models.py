@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from cloudinary.models import CloudinaryField
-
+from django.db import connection#
 # Create your models here.
 
 class User(AbstractUser):
@@ -48,12 +48,14 @@ class History(models.Model):
     class Meta:
         db_table = 'history'
 
+
 class Menu(models.Model):
     menu_weight = models.FloatField()
     menu_set = models.IntegerField()
     menu_rep = models.CharField(max_length=5)
     items = models.ManyToManyField('ItemList')
     user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,db_column='user_id')
+    display = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'menu'
@@ -94,6 +96,12 @@ class ItemList(models.Model):
 
     def __str__(self):
         return self.item_name
+
+    def get_item_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select * from item_list where item_id not in (select menu_items.menu_id from menu_items,menu where user_id=%s and menu_items.menu_id = menu.id)",[self.id])
+        row = cursor.fetchall()
+        return row
 
 class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)

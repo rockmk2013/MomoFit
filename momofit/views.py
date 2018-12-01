@@ -1,17 +1,17 @@
 from django.shortcuts import render
 # Create your views here.
-from .forms import CustomUserCreationForm,HistoryForm#
+from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
+from .models import ItemList
 
 def SignUp(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST, request.FILES)
         history_form = HistoryForm(request.POST)
-        print(request.FILES)
         if all([user_form.is_valid(), history_form.is_valid()]):
             user = user_form.save()
             history = history_form.save(commit=False)
@@ -48,7 +48,7 @@ def SignUp(request):
         'history_form': history_form,
     })
 
-@login_required(login_url='/momofit/login/') 
+@login_required(login_url='/') 
 def Hello_momo(request):
     if request.user.is_authenticated:
         # print(request.user.kcal)
@@ -67,3 +67,15 @@ def Hello_momo(request):
     else:
         context = None
     return render(request, 'profile.html', context=context)
+
+@login_required(login_url='/') 
+def Menu(request):
+    if request.method == 'POST':#insert to menu,insert to menu_item
+        menu_form = MenuForm(request.POST)
+        items_id = request.POST.getlist('items')
+        return redirect('menu')
+    else:
+        items = ItemList.get_item_list(request.user)
+        menu_form = MenuForm(items)
+        context={'menu_form':menu_form}
+    return render(request, 'menu.html', context=context)
