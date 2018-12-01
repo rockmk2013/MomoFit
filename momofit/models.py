@@ -29,6 +29,7 @@ class History(models.Model):
     squat_pr = models.IntegerField(verbose_name="深蹲個人紀錄(kg)",default=15)
     lift_pr = models.IntegerField(verbose_name="硬舉個人紀錄(kg)",default=15)
     tdee = models.IntegerField(default=1200)
+    date = models.DateTimeField(auto_now_add=True,null=True)
 
     actlevel_status = (
         (1,'久坐'),
