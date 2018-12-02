@@ -8,8 +8,27 @@
         <div class = "selfie"> 
           <img src="{% static 'img/momo.jpg' %}" class="user-selfie-style">
         </div>
+
+          <!-- Modal Structure -->
+          <div id="modal1" class="modal">
+            <div class="modal-content">
+                <h4>修改個人資料</h4>
+
+                <h6>身高：</h6>
+                <h6>體重：</h6>
+                <h6>胸推個人紀錄(kg)：</h6>
+                <h6>深蹲個人紀錄(kg)：</h6>
+                <h6>硬舉個人紀錄(kg)：</h6>
+                <h6>個人活動量：</h6>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">取消</a>
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">更新</a>
+            </div>
+          </div>
+
         <div class = "information" style="width:80%;">
-          <button type="submit" class="btn waves-effect">修改個人資料</button>
+            <a class="waves-effect waves-light btn modal-trigger" href="#modal1">修改個人資料</a>
           <h5>姓名: {{ name }}</h5>
           <h5>性別: {{ sex }}</h5>
           <h5>年齡: {{ age }}</h5>

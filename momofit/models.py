@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import connection
 from django.contrib.auth.models import AbstractUser
 
 
@@ -45,6 +46,15 @@ class History(models.Model):
     
     class Meta:
         db_table = 'history'
+
+    @staticmethod
+    def update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id):
+        cur = connection.cursor()
+        cur.callproc('update_history', (height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id))
+        results = cur.fetchall()
+        cur.close()
+        return results
+
 
 class Menu(models.Model):
     menu_weight = models.FloatField()
