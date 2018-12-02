@@ -1,13 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User
-# from .models import History
+from .models import User,History,ItemList
+
 
 class CustomUserCreationForm(UserCreationForm):
-
     class Meta(UserCreationForm):
         model = User
-        fields = ('username', 'email','age','sex')
+        fields = ('username', 'email','age','sex','user_pic')
+
 
 class CustomUserChangeForm(UserChangeForm):
 
@@ -15,8 +15,14 @@ class CustomUserChangeForm(UserChangeForm):
         model = User
         fields = ('username', 'email','age','sex')
 
-# class registrationHistoryForm(forms.Form):
-#     # height = forms.IntegerField()
-#     class Meta:
-#         model = History
-#         fields = ('height', 'weight')
+class HistoryForm(forms.ModelForm):
+    class Meta:
+        model = History
+        fields = ('height', 'weight', 'fat', 'push_pr', 'squat_pr', 'lift_pr','actlevel')
+
+
+class MenuForm(forms.Form):
+    def __init__(self, choice, *args, **kwargs):
+        super(MenuForm, self).__init__(*args, **kwargs)
+        self.fields['items'] = forms.MultipleChoiceField(choices=tuple([(name[0], name[1]) for name in choice]),label="菜單項目")
+    items = forms.MultipleChoiceField()

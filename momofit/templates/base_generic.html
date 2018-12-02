@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <script src="{% static "js/script.js" %}"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
     {% block navbar %}
@@ -28,8 +29,8 @@
         <ul id="nav-mobile" class="right hide-on-med-and-down">
           {% if user.is_authenticated %}
             <li class="user-info">
-              {% load static %}
-              <img src="{% static 'img/user-image.jpg' %}" class="user-image-style">
+              {% load cloudinary %}      
+              {% cloudinary user.user_pic format="jpg" width=120 height=120 crop="fill" class="user-image-style"%}
               {{ user.username }}
             </li>
             <li><a href="{% url 'logout' %}">登出</a></li>
@@ -45,23 +46,23 @@
     {% block sidebar %}
       <ul id="slide-out" class="sidenav sidenav-fixed">
         <li>
-          <a class="waves-effect" href="#!">
-            <i class="fas fa-user"></i> 個人檔案
+          <a class="waves-effect" href="{% url 'profile' %}">
+            <i class="material-icons">assignment_ind</i> 個人檔案
           </a>
         </li>
         <li>
           <a class="waves-effect" href="#!">
-            <i class="fas fa-utensils"></i> 飲食紀錄
+            <i class="material-icons">local_dining</i> 飲食紀錄
           </a>
         </li>
         <li>
           <a class="waves-effect" href="#!">
-            <i class="fas fa-dumbbell"></i> 健身紀錄
+            <i class="material-icons">fitness_center</i> 健身紀錄
           </a>
         </li>
         <li>
-          <a class="waves-effect" href="#!">
-            <i class="fas fa-compass"></i> 菜單推薦
+          <a class="waves-effect" href="{% url 'menu' %}">
+            <i class="material-icons">library_books</i> 菜單推薦
           </a>
         </li>
         <!-- <li><div class="divider"></div></li> -->
@@ -84,7 +85,11 @@
       document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.sidenav');
         var instances = M.Sidenav.init(elems);
+        $('select').formSelect();
+        $('.modal').modal();
       });
     </script>
+    {% block js-block %}
+    {% endblock%}
   </body>
 </html>
