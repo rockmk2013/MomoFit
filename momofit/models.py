@@ -67,15 +67,28 @@ class History(models.Model):
 
 
 class Menu(models.Model):
+    menu_id = models.AutoField(db_column='menu_id', primary_key=True)
     menu_weight = models.FloatField()
     menu_set = models.IntegerField()
     menu_rep = models.CharField(max_length=5)
-    items = models.ManyToManyField('ItemList')
-    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,db_column='user_id')
+    items = models.ForeignKey('ItemList', on_delete=models.CASCADE,db_column='item_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,db_column='user_id')
     display = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'menu'
+    
+    def get_item_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select l.item_id,l.item_name from menu,item_list as l where menu.item_id=l.item_id and user_id=%s and display<>1;",[self.id])
+        row = cursor.fetchall()
+        return row
+    def get_menu(self):
+        cursor = connection.cursor()
+        cursor.execute("select item_name,item_type,menu_set,menu_rep,menu_weight,menu_id from menu,item_list where menu.item_id=item_list.item_id and user_id=%s and display=1;",[self.id])
+        row = cursor.fetchall()
+        return row
+    ##def for update menu display
 
 class GymList(models.Model):
     gym_id = models.AutoField(db_column='gym_id', primary_key=True)
@@ -113,12 +126,6 @@ class ItemList(models.Model):
 
     def __str__(self):
         return self.item_name
-
-    def get_item_list(self):
-        cursor = connection.cursor()
-        cursor.execute("select * from item_list where item_id not in (select menu_items.menu_id from menu_items,menu where user_id=%s and menu_items.menu_id = menu.id)",[self.id])
-        row = cursor.fetchall()
-        return row
 
 class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)

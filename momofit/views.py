@@ -1,14 +1,12 @@
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
-# Create your views here.
 from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from .models import History
+from .models import Menu,History
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
-from .models import ItemList, History
 import datetime
 
 
@@ -108,13 +106,17 @@ def Hello_momo(request):
 
 
 @login_required(login_url='/') 
-def Menu(request):
+def menu(request):
     if request.method == 'POST':#insert to menu,insert to menu_item
         menu_form = MenuForm(request.POST)
         items_id = request.POST.getlist('items')
         return redirect('menu')
     else:
-        items = ItemList.get_item_list(request.user)
+        items = Menu.get_item_list(request.user)
+        item_none=False
+        if items==():
+            item_none=True
         menu_form = MenuForm(items)
-        context={'menu_form':menu_form}
+        menu_items = Menu.get_menu(request.user)
+        context={'menu_form':menu_form,'item_none':item_none,'menu_items':menu_items}
     return render(request, 'menu.html', context=context)
