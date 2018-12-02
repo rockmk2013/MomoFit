@@ -118,3 +118,11 @@ def Menu(request):
         menu_form = MenuForm(items)
         context={'menu_form':menu_form}
     return render(request, 'menu.html', context=context)
+    
+@login_required(login_url='/')
+def Train_record(request):
+    return render(request, 'train_record.html')
+
+@login_required(login_url='/')
+def Food_record(request):
+    return render(request, 'food_record.html')
