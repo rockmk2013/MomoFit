@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import connection
 from django.contrib.auth.models import AbstractUser
 
 from cloudinary.models import CloudinaryField
@@ -54,6 +55,15 @@ class History(models.Model):
         cursor.execute("SELECT * FROM momofitfit.history where user_id = %s;",[self.id])
         row = cursor.fetchall()
         return row
+
+
+    @staticmethod
+    def update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date):
+        cur = connection.cursor()
+        cur.callproc('update_history', (height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date))
+        results = cur.fetchall()
+        cur.close()
+        return results
 
 
 class Menu(models.Model):

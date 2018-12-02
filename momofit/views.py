@@ -1,12 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
+from django.template import RequestContext
 # Create your views here.
 from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
+from .models import History
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from .models import ItemList, History
+import datetime
 
 
 def SignUp(request):
@@ -51,26 +54,58 @@ def SignUp(request):
 
 @login_required(login_url='/') 
 def Hello_momo(request):
-    if request.user.is_authenticated:
-        # print(request.user.kcal)
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            # print(request.user.kcal)
+            history = History.get_history(request.user)
+            sex = "生理男性" if request.user.sex==1 else "生理女性"
+            #之後有多筆資料的時候可能要去改get_history的query
+            context = {
+                "name": request.user.username,
+                "age": request.user.age,
+                "sex": sex,
+                "height": history[-1][1],
+                "weight": history[-1][2],
+                "fat" : history[-1][9],
+                "bench_press" :  history[-1][3],
+                "Dead_lift" : history[-1][4],
+                "Squat" :  history[-1][5],
+                "TDEE": history[-1][6],
+                "actlevel": history[-1][7]
+            }
+        else:
+            context = None
+        return render(request, 'profile.html', context=context)
+    elif  request.method == 'POST':
+        height = request.POST['height']
+        weight = request.POST['weight']
+        fat = request.POST['fat']
+        tdee = request.POST['TDEE']
+        push_pr = request.POST['bench_press']
+        squat_pr = request.POST['Squat']
+        lift_pr = request.POST['Dead_lift']
+        actlevel = request.POST.get('act_value')
+        date = datetime.datetime.now()
+
+        History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, request.user.id, fat, date)
+
         history = History.get_history(request.user)
-        sex = "生理男性" if request.user.sex==1 else "生理女性"
-        #之後有多筆資料的時候可能要去改get_history的query
+        sex = "生理男性" if request.user.sex == 1 else "生理女性"
         context = {
             "name": request.user.username,
             "age": request.user.age,
             "sex": sex,
-            "height": history[0][1],
-            "weight": history[0][2],
-            "fat" : history[0][9],
-            "bench_press" :  history[0][3],
-            "Dead_lift" : history[0][4],
-            "Squat" :  history[0][5],
-            "TDEE": history[0][6] #不在user裡面了換到history table裡
+            "height": history[-1][1],
+            "weight": history[-1][2],
+            "fat": history[-1][9],
+            "bench_press": history[-1][3],
+            "Dead_lift": history[-1][4],
+            "Squat": history[-1][5],
+            "TDEE": history[-1][6],
+            "actlevel": history[-1][7]
         }
-    else:
-        context = None
-    return render(request, 'profile.html', context=context)
+        return render(request, 'profile.html', context=context)
+
 
 @login_required(login_url='/') 
 def Menu(request):
