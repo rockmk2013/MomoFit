@@ -13,7 +13,7 @@ from django.http import HttpResponse
 import json
 
 
-def Sign_up(request):
+def SignUp(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST, request.FILES)
         history_form = HistoryForm(request.POST)
@@ -62,6 +62,8 @@ def Hello_momo(request):
             history = History.get_history(request.user)
             sex = "生理男性" if request.user.sex==1 else "生理女性"
             #之後有多筆資料的時候可能要去改get_history的query
+            week_first_day, success_rate = History.get_records(request.user)
+            #print(success_rate)
             context = {
                 "name": request.user.username,
                 "age": request.user.age,
@@ -73,7 +75,9 @@ def Hello_momo(request):
                 "Dead_lift" : history[-1][4],
                 "Squat" :  history[-1][5],
                 "TDEE": history[-1][6],
-                "actlevel": history[-1][7]
+                "actlevel": history[-1][7],
+                "week_first_day" : week_first_day,
+                "success_rate" : success_rate['mean'].tolist()
             }
         else:
             context = None
