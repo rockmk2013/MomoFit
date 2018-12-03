@@ -71,6 +71,7 @@
       </div>
       <h2>我的歷程</h2> 
       <div class = "information-chart">
+        <div id="container" style="width: 800px; height: 500px;"></div>
         <div class = "information-chart-1">
         <h2>Graph-1</h2> 
           <img src="{% static 'img/work_freq.jpg' %}" class="work_freq">
@@ -80,6 +81,61 @@
           <img src="{% static 'img/BDS.jpg' %}" class="BDS">
         </div>
       </div>  
+      <script type="text/javascript">
+      $(document).ready(function() {
+    var title = {
+       text: '健身達成率折線圖'   
+    };
+    var subtitle = {
+       text: ''
+    };
+    var xAxis = {
+       categories:[
+        {% for day in week_first_day %}
+          "{{day}}",
+        {% endfor %}
+       ]
+    };
+    var yAxis = {
+       title: {
+          text: 'success rate'
+       },
+       plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+       }]
+    };   
+ 
+    var tooltip = {
+       valueSuffix: '\xB0C'
+    }
+ 
+    var legend = {
+       layout: 'vertical',
+       align: 'right',
+       verticalAlign: 'middle',
+       borderWidth: 0
+    };
+ 
+    var series =  [{
+                    name: '菜單達成率(%)',
+                    data: {{success_rate}}
+                }];
+ 
+    var json = {};
+ 
+    json.title = title;
+    json.subtitle = subtitle;
+    json.xAxis = xAxis;
+    json.yAxis = yAxis;
+    json.tooltip = tooltip;
+    json.legend = legend;
+    json.series = series;
+ 
+    $('#container').highcharts(json);
+ });
+      </script>
   <!-- {% else %} -->
     <!-- <h2>您尚未登入!</h2>  -->
   <!-- {% endif %}   -->

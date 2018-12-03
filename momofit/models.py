@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 
 from cloudinary.models import CloudinaryField
 from django.db import connection#
+import pandas as pd
+import datetime as dt
 # Create your models here.
 
 class User(AbstractUser):
@@ -64,6 +66,20 @@ class History(models.Model):
         results = cur.fetchall()
         cur.close()
         return results
+
+    def get_records(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM momofitfit.train_success where user_id = %s order by train_date;",[self.id])
+        row = cursor.fetchall()
+        data = pd.DataFrame(list(row),columns=["id","item_id","menu_set","menu_rep","menu_weight","date","rep","weight","train_set"])
+        data['week_first_day'] = data['date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
+        data['menu_rep'] = data['menu_rep'].apply(lambda x : int(x))
+        data['success rate'] = (data['rep']*data['weight']*data['train_set']) / (data['menu_rep']*data['menu_weight']*data['menu_set'])
+        tr_data = data[['week_first_day','success rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
+        week_first_day = tr_data['week_first_day']
+        success_rate = tr_data['success rate']
+
+        return week_first_day,success_rate
 
 
 class Menu(models.Model):
