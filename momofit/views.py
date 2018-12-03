@@ -77,7 +77,7 @@ def Hello_momo(request):
                 "TDEE": history[-1][6],
                 "actlevel": history[-1][7],
                 "week_first_day" : week_first_day,
-                "success_rate" : success_rate['mean'].tolist()
+                "success_rate" : success_rate
             }
         else:
             context = None
