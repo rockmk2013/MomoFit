@@ -13,7 +13,6 @@ import datetime
 
 
 
-
 def SignUp(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST, request.FILES)
