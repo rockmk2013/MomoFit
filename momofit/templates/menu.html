@@ -7,39 +7,68 @@
             <th>項目</th>
             <th>部位</th>
             <th>組數</th>
-            <th>重量</th>
+            <th>次數/組</th>
+            <th>重量(kg)</th>
             <th></th>
         </tr>
     </thead>
 
     <tbody>
+        {% for field in menu_items %}
         <tr>
-        <td>Alvin</td>
-        <td>Eclair</td>
-        <td>$0.87</td>
-        <td>dfd</td>
-        <td><a class="btn-floating btn waves-effect waves-light btn-right"><i class="material-icons">delete</i></a></td>
+            <td>{{field.0}}</td>
+            <td>{{field.1}}</td>
+            <td>{{field.2}}</td>
+            <td>{{field.3}}</td>
+            <td>{{field.4}}</td>
+            <td>
+                <span class="btn-floating btn waves-effect waves-light btn-right delete-menu-btn" data-id={{field.5}} value="delete">
+                    <i class="material-icons">delete</i>
+                </span>
+            </td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 <div id="modal-menu" class="modal">
     <div class="modal-content">
         <h5 class="modal-title">新增菜單項目</h5>
         <a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
+        {% if item_none %}
+            <p>您已選擇所有運動項目或沒有其他運動項目可以顯示</p>
+        {% else %}
         <form method="post">
-            <!-- {% csrf_token %}
+            {% csrf_token %}
             {{ menu_form.as_p }}
-            <button type="submit" class="btn waves-effect btn-right">完成</button> -->
-            {% for field in menu_form %}
-            <div class="fieldWrapper">
-                {% csrf_token %}
-                {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
-            </div>
-          {% endfor %}
-          <button type="submit" class="btn waves-effect btn-right">完成</button> 
+            <button type="submit" class="btn waves-effect btn-right">完成</button>
         </form>
+        {% endif %}
     </div>
 </div>
 
 {% endblock %}
+{% block js-block %}
+<script>
+    $(".delete-menu-btn").on('click',function(){
+        var td = $(this);
+        $.ajax({
+            type:"POST",
+            url:"/momofit/delete_menu/",
+            data: {
+                'menu-id': $(this).data().id
+                },
+            dataType:'json',
+            success: function(result){
+                td.parent().parent().fadeOut( 500, function() {
+                    $(this).remove();
+                });
+            },
+            error: function(e){
+                console.log(e)
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock%}
+
