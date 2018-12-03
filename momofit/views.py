@@ -8,9 +8,12 @@ from .models import Menu,History
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+import json
 
 
-def SignUp(request):
+def Sign_up(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST, request.FILES)
         history_form = HistoryForm(request.POST)
@@ -35,6 +38,7 @@ def SignUp(request):
                 history.tdee *= 1.9          
 
             history.save()
+            Menu.create_menu(user)
             new_user = authenticate(username=user_form.cleaned_data['username'],
                                     password=user_form.cleaned_data['password1'],
                                     )
@@ -106,10 +110,11 @@ def Hello_momo(request):
 
 
 @login_required(login_url='/') 
-def menu(request):
+def Menu_page(request):    
     if request.method == 'POST':#insert to menu,insert to menu_item
         menu_form = MenuForm(request.POST)
         items_id = request.POST.getlist('items')
+        Menu.add_menu_item(items_id)
         return redirect('menu')
     else:
         items = Menu.get_item_list(request.user)
@@ -120,3 +125,18 @@ def menu(request):
         menu_items = Menu.get_menu(request.user)
         context={'menu_form':menu_form,'item_none':item_none,'menu_items':menu_items}
     return render(request, 'menu.html', context=context)
+
+# @login_required(login_url='/')
+@csrf_exempt
+def delete_menu(request):
+    a = {"result":"post_success"}
+    Menu.delete_menu_item(request.POST['menu-id'])
+    return HttpResponse(json.dumps(a), content_type='application/json')
+
+@login_required(login_url='/')
+def Train_record(request):
+    return render(request, 'train_record.html')
+
+@login_required(login_url='/')
+def Food_record(request):
+    return render(request, 'food_record.html')

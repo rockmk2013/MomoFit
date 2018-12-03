@@ -80,7 +80,7 @@ class Menu(models.Model):
     
     def get_item_list(self):
         cursor = connection.cursor()
-        cursor.execute("select l.item_id,l.item_name from menu,item_list as l where menu.item_id=l.item_id and user_id=%s and display<>1;",[self.id])
+        cursor.execute("select menu.menu_id,l.item_name from menu,item_list as l where menu.item_id=l.item_id and user_id=%s and display<>1;",[self.id])
         row = cursor.fetchall()
         return row
     def get_menu(self):
@@ -88,7 +88,20 @@ class Menu(models.Model):
         cursor.execute("select item_name,item_type,menu_set,menu_rep,menu_weight,menu_id from menu,item_list where menu.item_id=item_list.item_id and user_id=%s and display=1;",[self.id])
         row = cursor.fetchall()
         return row
-    ##def for update menu display
+    def delete_menu_item(self):
+        cursor = connection.cursor()
+        cursor.execute("update menu set display=0 where menu_id=%s",[self])
+    def add_menu_item(self):
+        cursor = connection.cursor()
+        cursor.execute("update menu set display=1 where menu_id in %s",[tuple(self)])
+    @staticmethod
+    def create_menu(self):
+        print(type(self.id))
+        cur = connection.cursor()
+        cur.callproc('CreateMenu_procedure', (self.id,))
+        results = cur.fetchall()
+        cur.close()
+        return results
 
 class GymList(models.Model):
     gym_id = models.AutoField(db_column='gym_id', primary_key=True)
