@@ -1,11 +1,8 @@
 from django.shortcuts import render, render_to_response
-from django.template import RequestContext
-# Create your views here.
 from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from .models import History
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from .models import ItemList, History
@@ -77,6 +74,7 @@ def Hello_momo(request):
             context = None
         return render(request, 'profile.html', context=context)
     elif  request.method == 'POST':
+        history = History.get_history(request.user)
         height = request.POST['height']
         weight = request.POST['weight']
         fat = request.POST['fat']
@@ -85,6 +83,8 @@ def Hello_momo(request):
         squat_pr = request.POST['Squat']
         lift_pr = request.POST['Dead_lift']
         actlevel = request.POST.get('act_value')
+        if actlevel is None:
+            actlevel = history[-1][7]
         date = datetime.datetime.now()
 
         History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, request.user.id, fat, date)
