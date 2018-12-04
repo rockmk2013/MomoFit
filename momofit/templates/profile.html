@@ -11,53 +11,53 @@
         </div>
 
           <!-- Modal Structure -->
-          <div id="modal1" class="modal">
-            <div class="modal-content">
-                <h4>修改個人資料</h4>
-                <form action="/momofit/profile/" method="POST">
-                    {% csrf_token %}
-                    <h6>身高(cm)：</h6>
-                    <input type="text" name="height" value={{height}} />
-                    <h6>體重(gk)：</h6>
-                    <input type="text" name="weight" value={{weight}} />
-                    <h6>體脂率(%)：</h6>
-                    <input type="text" name="fat" value={{fat}} />
-                    <h6>TDEE：</h6>
-                    <input type="text" name="TDEE" value={{TDEE}} />
-                    <h6>胸推個人紀錄(kg)：</h6>
-                    <input type="text" name="bench_press" value={{bench_press}} />
-                    <h6>深蹲個人紀錄(kg)：</h6>
-                    <input type="text" name="Squat" value={{Squat}} />
-                    <h6>硬舉個人紀錄(kg)：</h6>
-                    <input type="text" name="Dead_lift" value={{Dead_lift}} />
-                    <h6>個人活動量：</h6>
-                        <div class="input-field col s12">
-                            <select name="act_value">
-                                <option value={{ actlevel }} disabled selected>
-                                    {% if actlevel == 1 %} 久坐
-                                    {% elif actlevel == 2 %} 輕量活動量
-                                    {% elif actlevel == 3 %} 中度活動量
-                                    {% elif actlevel == 4 %} 高度活動量
-                                    {% else %} 非常高度活動量
-                                    {% endif %}
-                                </option>
-                                <option value="1">久坐</option>
-                                <option value="2">輕量活動量</option>
-                                <option value="3">中度活動量</option>
-                                <option value="4">高度活動量</option>
-                                <option value="5">非常高度活動量</option>
-                            </select>
-                        </div>
-                    <br>
-                    <div class="modal-footer">
-                <a href="#!" class="modal-close waves-effect waves-green btn-flat">取消</a>
-                <button type="submit" href="#!" class="modal-close waves-effect waves-green btn-flat">更新</button>
-            </div>
-                </form>
-            </div>
+        <div id="modal1" class="modal">
+          <div class="modal-content">
+              <h4>修改個人資料</h4>
+              <form action="/momofit/profile/" method="POST">
+                  {% csrf_token %}
+                  <h6>身高(cm)：</h6>
+                  <input type="text" name="height" value={{height}} />
+                  <h6>體重(gk)：</h6>
+                  <input type="text" name="weight" value={{weight}} />
+                  <h6>體脂率(%)：</h6>
+                  <input type="text" name="fat" value={{fat}} />
+                  <h6>TDEE：</h6>
+                  <input type="text" name="TDEE" value={{TDEE}} />
+                  <h6>胸推個人紀錄(kg)：</h6>
+                  <input type="text" name="bench_press" value={{bench_press}} />
+                  <h6>深蹲個人紀錄(kg)：</h6>
+                  <input type="text" name="Squat" value={{Squat}} />
+                  <h6>硬舉個人紀錄(kg)：</h6>
+                  <input type="text" name="Dead_lift" value={{Dead_lift}} />
+                  <h6>個人活動量：</h6>
+                      <div class="input-field col s12">
+                          <select name="act_value">
+                              <option value={{ actlevel }} disabled selected>
+                                  {% if actlevel == 1 %} 久坐
+                                  {% elif actlevel == 2 %} 輕量活動量
+                                  {% elif actlevel == 3 %} 中度活動量
+                                  {% elif actlevel == 4 %} 高度活動量
+                                  {% else %} 非常高度活動量
+                                  {% endif %}
+                              </option>
+                              <option value="1">久坐</option>
+                              <option value="2">輕量活動量</option>
+                              <option value="3">中度活動量</option>
+                              <option value="4">高度活動量</option>
+                              <option value="5">非常高度活動量</option>
+                          </select>
+                      </div>
+                  <br>
+                  <div class="modal-footer">
+              <a href="#!" class="modal-close waves-effect waves-green btn-flat">取消</a>
+              <button type="submit" href="#!" class="modal-close waves-effect waves-green btn-flat">更新</button>
           </div>
+              </form>
+          </div>
+        </div>
 
-        <div class = "information" style="width:80%;">
+        <div class = "information" >
             <a class="waves-effect waves-light btn modal-trigger" href="#modal1">修改個人資料</a>
           <h5>姓名: {{ name }}</h5>
           <h5>性別: {{ sex }}</h5>
@@ -71,6 +71,7 @@
       </div>
       <h2>我的歷程</h2> 
       <div class = "information-chart">
+        <div id="container" style="width: 800px; height: 500px;"></div>
         <div class = "information-chart-1">
         <h2>Graph-1</h2> 
           <img src="{% static 'img/work_freq.jpg' %}" class="work_freq">
@@ -80,6 +81,61 @@
           <img src="{% static 'img/BDS.jpg' %}" class="BDS">
         </div>
       </div>  
+      <script type="text/javascript">
+      $(document).ready(function() {
+    var title = {
+       text: '健身達成率折線圖'   
+    };
+    var subtitle = {
+       text: ''
+    };
+    var xAxis = {
+       categories:[
+        {% for day in week_first_day %}
+          "{{day}}",
+        {% endfor %}
+       ]
+    };
+    var yAxis = {
+       title: {
+          text: 'success rate'
+       },
+       plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+       }]
+    };   
+ 
+    var tooltip = {
+       valueSuffix: '\xB0C'
+    }
+ 
+    var legend = {
+       layout: 'vertical',
+       align: 'right',
+       verticalAlign: 'middle',
+       borderWidth: 0
+    };
+ 
+    var series =  [{
+                    name: '菜單達成率(%)',
+                    data: {{success_rate}}
+                }];
+ 
+    var json = {};
+ 
+    json.title = title;
+    json.subtitle = subtitle;
+    json.xAxis = xAxis;
+    json.yAxis = yAxis;
+    json.tooltip = tooltip;
+    json.legend = legend;
+    json.series = series;
+ 
+    $('#container').highcharts(json);
+ });
+      </script>
   <!-- {% else %} -->
     <!-- <h2>您尚未登入!</h2>  -->
   <!-- {% endif %}   -->

@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <script type="text/javascript" src="{% static 'jquery-3.3.1.js' %}"></script>
-
+    <script src="http://code.highcharts.com/highcharts.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
@@ -51,12 +51,12 @@
           </a>
         </li>
         <li>
-          <a class="waves-effect" href="#!">
+          <a class="waves-effect" href="{% url 'food_record' %}">
             <i class="material-icons">local_dining</i> 飲食紀錄
           </a>
         </li>
         <li>
-          <a class="waves-effect" href="#!">
+          <a class="waves-effect" href="{% url 'train_record'%}">
             <i class="material-icons">fitness_center</i> 健身紀錄
           </a>
         </li>
