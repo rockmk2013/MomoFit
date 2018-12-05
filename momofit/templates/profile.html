@@ -81,6 +81,10 @@
                 <h4>體重、體脂變化量</h4>
                 <div id="container_weight" style="width: 800px; height: 500px;"></div>
             </div>
+        <h2>健身頻率</h2>
+          <div id="train_freq_graph" style="width: 800px; height: 500px;"></div>
+          {% comment %} <img src="{% static 'img/BDS.jpg' %}" class="BDS"> {% endcomment %}
+        </div>
         </div>
         <script type="text/javascript">
             $(document).ready(function () {
@@ -204,6 +208,59 @@
                 };
                 $('#container_weight').highcharts(json);
             });
+            $(document).ready(function() {
+        var title = {
+          text: '健身頻率折線圖'
+        };
+        var subtitle = {
+          text: ''
+        };
+        var xAxis = {
+          categories:[
+            {% for day in train_first_day %}
+              "{{day}}",
+            {% endfor %}
+          ]
+        };
+        var yAxis = {
+          title: {
+              text: 'Frequency'
+          },
+          plotLines: [{
+              value: 0,
+              width: 1,
+              color: '#808080'
+          }]
+        };
+
+        var tooltip = {
+          valueSuffix: ''
+        }
+
+        var legend = {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle',
+          borderWidth: 0
+        };
+
+        var series =  [{
+                        name: '該周健身次數',
+                        data: {{freq_count}}
+                    }];
+
+        var json = {};
+
+        json.title = title;
+        json.subtitle = subtitle;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.tooltip = tooltip;
+        json.legend = legend;
+        json.series = series;
+
+            $('#train_freq_graph').highcharts(json);
+      });
         </script>
         <!-- {% else %} -->
         <!-- <h2>您尚未登入!</h2>  -->
