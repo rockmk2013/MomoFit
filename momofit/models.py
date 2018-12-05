@@ -66,12 +66,28 @@ class History(models.Model):
         results = cur.fetchall()
         cur.close()
         return results
+    def get_train_freq(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from train_freq where user_id=%s and gr_date > CURDATE()- INTERVAL 49 DAY ;",[self.id])
+        row = cursor.fetchall()
+        #print(row)
+        if len(row) == 0:
+            week_first_day = None
+            freq_count = None
+        else:    
+            data = pd.DataFrame(list(row),columns=["gr_id","gr_date","gym_id","user_id"])
+            data['train_first_day'] = data['gr_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
+            tr_data = data[['train_first_day','gr_id']].groupby(['train_first_day']).agg(['count']).reset_index()
+            train_first_day = tr_data['train_first_day']
+            freq_count = tr_data['gr_id']['count'].tolist()
+            #print(success_rate)
+        return train_first_day,freq_count
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM momofitfit.train_success where user_id = %s order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM momofitfit.train_success where user_id =%s and train_date > CURDATE()- INTERVAL 49 DAY order by train_date;",[self.id])
         row = cursor.fetchall()
-        print(row)
+        #print(row)
         if len(row) == 0:
             week_first_day = None
             success_rate = None
@@ -83,7 +99,7 @@ class History(models.Model):
             tr_data = data[['week_first_day','success rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
             week_first_day = tr_data['week_first_day']
             success_rate = tr_data['success rate']['mean'].tolist()
-
+            #print(success_rate)
         return week_first_day,success_rate
 
 

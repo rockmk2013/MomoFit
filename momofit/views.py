@@ -62,8 +62,10 @@ def Hello_momo(request):
             history = History.get_history(request.user)
             sex = "生理男性" if request.user.sex==1 else "生理女性"
             #之後有多筆資料的時候可能要去改get_history的query
+            train_first_day, freq_count = History.get_train_freq(request.user)
             week_first_day, success_rate = History.get_records(request.user)
-            #print(success_rate)
+            #print(train_first_day)
+            #print(week_first_day)
             context = {
                 "name": request.user.username,
                 "age": request.user.age,
@@ -77,7 +79,9 @@ def Hello_momo(request):
                 "TDEE": history[-1][6],
                 "actlevel": history[-1][7],
                 "week_first_day" : week_first_day,
-                "success_rate" : success_rate
+                "success_rate" : success_rate,
+                "train_first_day" : train_first_day,
+                "freq_count" : freq_count
             }
         else:
             context = None
