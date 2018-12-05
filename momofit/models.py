@@ -69,9 +69,9 @@ class History(models.Model):
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM momofitfit.train_success where user_id = %s order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM momofitfit.train_success WHERE user_id=%s and train_date BETWEEN SUBDATE(CURDATE(), INTERVAL 49 DAY) AND CURDATE() order by train_date;",[self.id])
         row = cursor.fetchall()
-        print(row)
+
         if len(row) == 0:
             week_first_day = None
             success_rate = None
@@ -84,7 +84,34 @@ class History(models.Model):
             week_first_day = tr_data['week_first_day']
             success_rate = tr_data['success rate']['mean'].tolist()
 
-        return week_first_day,success_rate
+            for i, rate in enumerate(success_rate):
+                if rate > 1:
+                    success_rate[i] = 1
+                success_rate[i] *= 100
+
+        return week_first_day, success_rate
+
+    def get_weight_fat(self):
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM momofitfit.get_weight WHERE user_id=%s ;",
+            [self.id])
+        row = cursor.fetchall()
+
+        if len(row) == 0:
+            week_first_day = None
+            weight = None
+            fat = None
+        else:
+            data = pd.DataFrame(list(row),
+                                columns=["id", "weight", "fat", "date"])
+            data['week_first_day'] = data['date'].apply(lambda x: x - dt.timedelta(days=x.isoweekday() % 7))
+            tr_data = data[['week_first_day', 'weight', 'fat']].groupby(['week_first_day']).agg(['mean']).reset_index()
+            week_first_day = tr_data['week_first_day']
+            weight = tr_data['weight']['mean'].tolist()
+            fat = tr_data['fat']['mean'].tolist()
+        return week_first_day, weight, fat
+
 
 
 class Menu(models.Model):
@@ -117,7 +144,7 @@ class Menu(models.Model):
         cursor.execute("update menu set display=1 where menu_id in %s",[tuple(self)])
     @staticmethod
     def create_menu(self):
-        print(type(self.id))
+        # print(type(self.id))
         cur = connection.cursor()
         cur.callproc('CreateMenu_procedure', (self.id,))
         results = cur.fetchall()
