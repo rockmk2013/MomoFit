@@ -72,7 +72,7 @@ class History(models.Model):
         row = cursor.fetchall()
         #print(row)
         if len(row) == 0:
-            week_first_day = None
+            train_first_day = None
             freq_count = None
         else:    
             data = pd.DataFrame(list(row),columns=["gr_id","gr_date","gym_id","user_id"])
@@ -80,7 +80,6 @@ class History(models.Model):
             tr_data = data[['train_first_day','gr_id']].groupby(['train_first_day']).agg(['count']).reset_index()
             train_first_day = tr_data['train_first_day']
             freq_count = tr_data['gr_id']['count'].tolist()
-            #print(success_rate)
         return train_first_day,freq_count
 
     def get_records(self):
