@@ -3,12 +3,13 @@ from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from .models import Menu,History
+from .models import Menu,History,FoodRecord,TrainRecord
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.template.loader import get_template
 import json
 
 
@@ -155,8 +156,59 @@ def delete_menu(request):
 
 @login_required(login_url='/')
 def Train_record(request):
-    return render(request, 'train_record.html')
+    if request.method == "POST":
+        add = request.POST.getlist("add_train")
+        """
+        add_date = request.POST["select_date"]
+        add_item = request.POST["select_item"]
+        add_weight= request.POST["select_weight"]
+        add_train_set = request.POST["select_train_set"]
+        """
+        
+
+    #template = get_template('train_record.html')
+    record = TrainRecord.get_record(request.user)
+    item_list = TrainRecord.get_item_list(request.user)
+    train_set = range(1,11)
+    try:
+        date = request.GET['mydate']
+        record = TrainRecord.search(request.user,date)
+    except:
+        pass
+    context = {'record':record,
+                'item_list':item_list,
+                'train_set':train_set}
+    #html = template.render(locals())
+    #return HttpResponse(html)
+    return render(request,'train_record.html',context=context)
+
 
 @login_required(login_url='/')
 def Food_record(request):
-    return render(request, 'food_record.html')
+    #template = get_template('food_record.html')
+    record = FoodRecord.get_record(request.user)
+    list = FoodRecord.get_food_list(request.user)
+    list = [i for i in list]
+    store_list = set([i[0] for i in list])
+    quantity = range(7)
+    
+    food_dict = {}
+    for s in list:
+        if s[0] in food_dict:
+            food_dict[s[0]].append(s[1])
+        else:
+            food_dict[s[0]] = [s[1]]
+
+    try:
+        date = request.GET['mydate']
+        record = FoodRecord.search(request.user,date)
+    except:
+        pass
+    context = {'record':record,
+                'list':list,
+                'store_list':store_list,
+                'quantity':quantity,
+                'food_dict':food_dict}
+    #html = template.render(locals())
+    #return HttpResponse(html)
+    return render(request, 'food_record.html', context=context)

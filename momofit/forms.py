@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User,History,ItemList
+from .models import User,History,ItemList,FoodRecord
 
 
 class CustomUserCreationForm(UserCreationForm):
