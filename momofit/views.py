@@ -64,7 +64,7 @@ def Hello_momo(request):
             train_first_day, freq_count = History.get_train_freq(request.user)
             week_first_day, success_rate = History.get_records(request.user)
             weight_week, weight, fat = History.get_weight_fat(request.user)
-            print(weight_week, weight, fat, 'hihihi')
+            #print(weight_week, weight, fat, 'hihihi')
             context = {
                 "name": request.user.username,
                 "age": request.user.age,

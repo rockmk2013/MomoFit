@@ -98,6 +98,7 @@ class History(models.Model):
             tr_data = data[['week_first_day','success rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
             week_first_day = tr_data['week_first_day']
             success_rate = tr_data['success rate']['mean'].tolist()
+            success_rate = [ round(elem, 2) for elem in success_rate]
 
             for i, rate in enumerate(success_rate):
                 if rate > 1:
@@ -118,7 +119,7 @@ class History(models.Model):
             weight = None
             fat = None
         else:
-            print(row)
+            #print(row)
             data = pd.DataFrame(list(row),
                                 columns=["id", "weight", "fat", "date"])
             data['week_first_day'] = data['date'].apply(lambda x: x - dt.timedelta(days=x.isoweekday() % 7))
@@ -126,6 +127,8 @@ class History(models.Model):
             week_first_day = tr_data['week_first_day']
             weight = tr_data['weight']['mean'].tolist()
             fat = tr_data['fat']['mean'].tolist()
+            weight = [ round(elem, 2) for elem in weight]
+            fat = [ round(elem, 2) for elem in fat]
         return week_first_day, weight, fat
 
 
