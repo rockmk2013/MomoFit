@@ -140,9 +140,10 @@
                 json.series = series;
 
                 $('#container').highcharts(json);
+            });
 
-                {# weight #}
-                var json = {
+            $(document).ready(function () {
+               var json_weight = {
                     chart: {
                         zoomType: 'xy'
                     },
@@ -207,8 +208,9 @@
                         }
                     }]
                 };
-                $('#container_weight').highcharts(json);
+                $('#container_weight').highcharts(json_weight);
             });
+
             $(document).ready(function () {
                 var title = {
                     text: '健身頻率折線圖'
