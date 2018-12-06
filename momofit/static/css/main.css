@@ -141,3 +141,31 @@ body{
   display: inline-block;
   margin-top: 0;
 }
+
+.tabs{
+  height: 100px !important;
+}
+.tabs .tab a{
+  height: 100px !important;
+  color:#000 !important;
+}
+.tabs .tab a:hover {
+  background-color: #e0f2f1 !important;
+  color:#004d40 !important;
+}
+.tabs .tab a.active {
+  background-color: #fff !important;
+  color:#000!important;
+}
+.tabs .indicator {
+  background-color:#004d40 !important;
+}
+.tab-container{
+  padding: 0px !important;
+}
+.tab-number{
+  font-size: 1.2rem;
+}
+.tabs .tab a.active .tab-number{
+  font-weight: 600;
+}

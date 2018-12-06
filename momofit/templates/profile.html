@@ -75,20 +75,17 @@
     </div>
     <h5>我的歷程</h5>
     <hr/>
-    <div class="information-chart">
-        <div class="information-chart-1">
-            <h6>菜單達成率</h6>
-            <div id="container" style="width: 800px; height: 500px;"></div>
+    <div class="row card">
+        <div class="col s12 tab-container">
+            <ul class="tabs">
+            <li class="tab col s4"><a href="#test1"><div>菜單達成率</div><div class="tab-number">{{success_rate|default:"-"|last}}%</div></a></li>
+            <li class="tab col s4"><a class="active" href="#test2"><div>體重變化量 / 體脂變化量</div><div class="tab-number">{{fat_record|default:"-"|last}}% / {{weight_record|last}}%</div></a></li>
+            <li class="tab col s4"><a href="#test3"><div>健身頻率</div><div class="tab-number">{{freq_count|default:"-"|last}}次</div> </a></li>
+            </ul>
         </div>
-        <div class="information-chart-2">
-            <h6>體重、體脂變化量</h6>
-            <div id="container_weight" style="width: 800px; height: 500px;"></div>
-        </div>
-        <div class="information-chart-2">
-            <h6>健身頻率</h6>
-            <div id="train_freq_graph" style="width: 800px; height: 500px;"></div>
-        </div>
-    </div>
+        <div id="test1" class="col s12"><div id="container" style="width: 100%; height: 500px;"></div></div>
+        <div id="test2" class="col s12"> <div id="container_weight" style="width: 100%; height: 500px;"></div></div>
+        <div id="test3" class="col s12"><div id="train_freq_graph" style="width: 100%; height: 500px;"></div></div>
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
