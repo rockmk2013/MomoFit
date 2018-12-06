@@ -1,15 +1,15 @@
-from django.shortcuts import render, render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from .models import Menu,History
+from .models import Menu,History,FoodRecord,TrainRecord
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.template.loader import get_template
 import json
 
 
@@ -58,12 +58,13 @@ def SignUp(request):
 def Hello_momo(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            # print(request.user.kcal)
             history = History.get_history(request.user)
             sex = "生理男性" if request.user.sex==1 else "生理女性"
             #之後有多筆資料的時候可能要去改get_history的query
+            train_first_day, freq_count = History.get_train_freq(request.user)
             week_first_day, success_rate = History.get_records(request.user)
-            #print(success_rate)
+            weight_week, weight, fat = History.get_weight_fat(request.user)
+            #print(weight_week, weight, fat, 'hihihi')
             context = {
                 "name": request.user.username,
                 "age": request.user.age,
@@ -77,12 +78,18 @@ def Hello_momo(request):
                 "TDEE": history[-1][6],
                 "actlevel": history[-1][7],
                 "week_first_day" : week_first_day,
-                "success_rate" : success_rate
+                "success_rate" : success_rate,
+                "weight_week": weight_week,
+                "weight_record": weight,
+                "fat_record": fat,
+                "train_first_day" : train_first_day,
+                "freq_count" : freq_count
             }
         else:
             context = None
         return render(request, 'profile.html', context=context)
     elif  request.method == 'POST':
+        history = History.get_history(request.user)
         height = request.POST['height']
         weight = request.POST['weight']
         fat = request.POST['fat']
@@ -91,12 +98,15 @@ def Hello_momo(request):
         squat_pr = request.POST['Squat']
         lift_pr = request.POST['Dead_lift']
         actlevel = request.POST.get('act_value')
+        if actlevel is None:
+            actlevel = history[-1][7]
         date = datetime.datetime.now()
-
         History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, request.user.id, fat, date)
-
         history = History.get_history(request.user)
         sex = "生理男性" if request.user.sex == 1 else "生理女性"
+        train_first_day, freq_count = History.get_train_freq(request.user)
+        week_first_day, success_rate = History.get_records(request.user)
+        weight_week, weight, fat = History.get_weight_fat(request.user)
         context = {
             "name": request.user.username,
             "age": request.user.age,
@@ -108,7 +118,14 @@ def Hello_momo(request):
             "Dead_lift": history[-1][4],
             "Squat": history[-1][5],
             "TDEE": history[-1][6],
-            "actlevel": history[-1][7]
+            "actlevel": history[-1][7],
+            "week_first_day": week_first_day,
+            "success_rate": success_rate,
+            "weight_week": weight_week,
+            "weight_record": weight,
+            "fat_record": fat,
+            "train_first_day": train_first_day,
+            "freq_count": freq_count
         }
         return render(request, 'profile.html', context=context)
 
@@ -139,8 +156,59 @@ def delete_menu(request):
 
 @login_required(login_url='/')
 def Train_record(request):
-    return render(request, 'train_record.html')
+    if request.method == "POST":
+        add = request.POST.getlist("add_train")
+        """
+        add_date = request.POST["select_date"]
+        add_item = request.POST["select_item"]
+        add_weight= request.POST["select_weight"]
+        add_train_set = request.POST["select_train_set"]
+        """
+        
+
+    #template = get_template('train_record.html')
+    record = TrainRecord.get_record(request.user)
+    item_list = TrainRecord.get_item_list(request.user)
+    train_set = range(1,11)
+    try:
+        date = request.GET['mydate']
+        record = TrainRecord.search(request.user,date)
+    except:
+        pass
+    context = {'record':record,
+                'item_list':item_list,
+                'train_set':train_set}
+    #html = template.render(locals())
+    #return HttpResponse(html)
+    return render(request,'train_record.html',context=context)
+
 
 @login_required(login_url='/')
 def Food_record(request):
-    return render(request, 'food_record.html')
+    #template = get_template('food_record.html')
+    record = FoodRecord.get_record(request.user)
+    list = FoodRecord.get_food_list(request.user)
+    list = [i for i in list]
+    store_list = set([i[0] for i in list])
+    quantity = range(7)
+    
+    food_dict = {}
+    for s in list:
+        if s[0] in food_dict:
+            food_dict[s[0]].append(s[1])
+        else:
+            food_dict[s[0]] = [s[1]]
+
+    try:
+        date = request.GET['mydate']
+        record = FoodRecord.search(request.user,date)
+    except:
+        pass
+    context = {'record':record,
+                'list':list,
+                'store_list':store_list,
+                'quantity':quantity,
+                'food_dict':food_dict}
+    #html = template.render(locals())
+    #return HttpResponse(html)
+    return render(request, 'food_record.html', context=context)

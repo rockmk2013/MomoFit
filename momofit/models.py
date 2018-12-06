@@ -66,12 +66,27 @@ class History(models.Model):
         results = cur.fetchall()
         cur.close()
         return results
+    def get_train_freq(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from train_freq where user_id=%s and gr_date > CURDATE()- INTERVAL 49 DAY ;",[self.id])
+        row = cursor.fetchall()
+        #print(row)
+        if len(row) == 0:
+            train_first_day = None
+            freq_count = None
+        else:    
+            data = pd.DataFrame(list(row),columns=["gr_id","gr_date","gym_id","user_id"])
+            data['train_first_day'] = data['gr_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
+            tr_data = data[['train_first_day','gr_id']].groupby(['train_first_day']).agg(['count']).reset_index()
+            train_first_day = tr_data['train_first_day']
+            freq_count = tr_data['gr_id']['count'].tolist()
+        return train_first_day,freq_count
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM momofitfit.train_success where user_id = %s order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM momofitfit.train_success WHERE user_id=%s and train_date BETWEEN SUBDATE(CURDATE(), INTERVAL 49 DAY) AND CURDATE() order by train_date;",[self.id])
         row = cursor.fetchall()
-        print(row)
+
         if len(row) == 0:
             week_first_day = None
             success_rate = None
@@ -83,8 +98,38 @@ class History(models.Model):
             tr_data = data[['week_first_day','success rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
             week_first_day = tr_data['week_first_day']
             success_rate = tr_data['success rate']['mean'].tolist()
+            success_rate = [ round(elem, 2) for elem in success_rate]
 
-        return week_first_day,success_rate
+            for i, rate in enumerate(success_rate):
+                if rate > 1:
+                    success_rate[i] = 1
+                success_rate[i] *= 100
+
+        return week_first_day, success_rate
+
+    def get_weight_fat(self):
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM momofitfit.get_weight WHERE user_id=%s ;",
+            [self.id])
+        row = cursor.fetchall()
+
+        if len(row) == 0:
+            week_first_day = None
+            weight = None
+            fat = None
+        else:
+            #print(row)
+            data = pd.DataFrame(list(row),
+                                columns=["id", "weight", "fat", "date"])
+            data['week_first_day'] = data['date'].apply(lambda x: x - dt.timedelta(days=x.isoweekday() % 7))
+            tr_data = data[['week_first_day', 'weight', 'fat']].groupby(['week_first_day']).agg(['mean']).reset_index()
+            week_first_day = tr_data['week_first_day']
+            weight = tr_data['weight']['mean'].tolist()
+            fat = tr_data['fat']['mean'].tolist()
+            weight = [ round(elem, 2) for elem in weight]
+            fat = [ round(elem, 2) for elem in fat]
+        return week_first_day, weight, fat
 
 
 class Menu(models.Model):
@@ -117,7 +162,7 @@ class Menu(models.Model):
         cursor.execute("update menu set display=1 where menu_id in %s",[tuple(self)])
     @staticmethod
     def create_menu(self):
-        print(type(self.id))
+        # print(type(self.id))
         cur = connection.cursor()
         cur.callproc('CreateMenu_procedure', (self.id,))
         cur.close()
@@ -161,7 +206,7 @@ class ItemList(models.Model):
 
 class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)
-    train_date = models.DateTimeField(db_column='train_date', null=False)
+    train_date = models.DateField(db_column='train_date', null=False)
     rep = models.IntegerField(db_column='rep', null=False)
     weight = models.FloatField(db_column='weight', null=False)
     train_set = models.IntegerField(db_column='train_set', null=False)
@@ -170,6 +215,28 @@ class TrainRecord(models.Model):
 
     class Meta:
         db_table = 'train_record'
+
+    def get_record(self):
+        cursor = connection.cursor()
+        cursor.execute("select tr.train_date, item_list.item_name, tr.weight, tr.train_set from train_record as tr, item_list, gym_record where tr.item_id= item_list.item_id and gym_record.gr_id = tr.gr_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        row = cursor.fetchall()
+        return row
+
+    def search(self,date):
+        cursor = connection.cursor()
+        cursor.execute("select tr.train_date, item_list.item_name, tr.weight, tr.train_set from train_record as tr, item_list, gym_record where tr.item_id= item_list.item_id and gym_record.gr_id = tr.gr_id and gym_record.user_id=%s and tr.train_date=%s;",[self.id,date])
+        row = cursor.fetchall()
+        return row
+    
+    def get_item_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select item_list.item_name from item_list;")
+        row = cursor.fetchall()
+        return row
+
+    def add_record(self):
+        cursor = connection.cursor()
+        cursor.execute("insert into train_record(train_date,weight,train_set,item_id) values (%s,%s,%s,item_id) select item_list.item_id from item_list where item_list.item_name=%s",[])
 
     def __str__(self):
         return self.train_id
@@ -203,9 +270,31 @@ class FoodRecord(models.Model):
     food_id = models.ForeignKey(FoodItem, models.DO_NOTHING, db_column='food_id')  # Field name made lowercase.
     quantity = models.FloatField(db_column='quantity')  # Field name made lowercase.
     user = models.ForeignKey(User, models.DO_NOTHING, db_column='id')  # Field name made lowercase.
+    fr_date = models.DateField(db_column='fr_date')
 
     class Meta:
         db_table = 'food_record'
 
+    def get_record(self):
+        cursor = connection.cursor()
+        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
+        row = cursor.fetchall()
+        return row
+
+    def get_food_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select store.store_name,food_item.food from store,food_item where store.store_id = food_item.store_id")
+        row = cursor.fetchall()
+        return row
+
+    def search(self,date):
+        cursor = connection.cursor()
+        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s and fr.fr_date=%s;",[self.id,date])
+        row = cursor.fetchall()
+        return row
+
+    def add(self):
+        cursor = connection.cursor()
+        
     def __str__(self):
         return self.fr_id
