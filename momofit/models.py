@@ -205,7 +205,7 @@ class ItemList(models.Model):
 
 class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)
-    train_date = models.DateTimeField(db_column='train_date', null=False)
+    train_date = models.DateField(db_column='train_date', null=False)
     rep = models.IntegerField(db_column='rep', null=False)
     weight = models.FloatField(db_column='weight', null=False)
     train_set = models.IntegerField(db_column='train_set', null=False)
@@ -214,6 +214,28 @@ class TrainRecord(models.Model):
 
     class Meta:
         db_table = 'train_record'
+
+    def get_record(self):
+        cursor = connection.cursor()
+        cursor.execute("select tr.train_date, item_list.item_name, tr.weight, tr.train_set from train_record as tr, item_list, gym_record where tr.item_id= item_list.item_id and gym_record.gr_id = tr.gr_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        row = cursor.fetchall()
+        return row
+
+    def search(self,date):
+        cursor = connection.cursor()
+        cursor.execute("select tr.train_date, item_list.item_name, tr.weight, tr.train_set from train_record as tr, item_list, gym_record where tr.item_id= item_list.item_id and gym_record.gr_id = tr.gr_id and gym_record.user_id=%s and tr.train_date=%s;",[self.id,date])
+        row = cursor.fetchall()
+        return row
+    
+    def get_item_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select item_list.item_name from item_list;")
+        row = cursor.fetchall()
+        return row
+
+    def add_record(self):
+        cursor = connection.cursor()
+        cursor.execute("insert into train_record(train_date,weight,train_set,item_id) values (%s,%s,%s,item_id) select item_list.item_id from item_list where item_list.item_name=%s",[])
 
     def __str__(self):
         return self.train_id
@@ -247,9 +269,31 @@ class FoodRecord(models.Model):
     food_id = models.ForeignKey(FoodItem, models.DO_NOTHING, db_column='food_id')  # Field name made lowercase.
     quantity = models.FloatField(db_column='quantity')  # Field name made lowercase.
     user = models.ForeignKey(User, models.DO_NOTHING, db_column='id')  # Field name made lowercase.
+    fr_date = models.DateField(db_column='fr_date')
 
     class Meta:
         db_table = 'food_record'
 
+    def get_record(self):
+        cursor = connection.cursor()
+        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
+        row = cursor.fetchall()
+        return row
+
+    def get_food_list(self):
+        cursor = connection.cursor()
+        cursor.execute("select store.store_name,food_item.food from store,food_item where store.store_id = food_item.store_id")
+        row = cursor.fetchall()
+        return row
+
+    def search(self,date):
+        cursor = connection.cursor()
+        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s and fr.fr_date=%s;",[self.id,date])
+        row = cursor.fetchall()
+        return row
+
+    def add(self):
+        cursor = connection.cursor()
+        
     def __str__(self):
         return self.fr_id
