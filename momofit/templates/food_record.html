@@ -1,10 +1,10 @@
 {% extends "base_generic.html" %}
 {% block content %}
 <div class="food_record">
-
-    <form action="/momofit/food_record" method="GET">
-        <input id="mydate" type="text" name="mydate" class="datepicker">
-        <button type="submit" value="submit" name='submit-btn' class="btn waves-effect">search</button>
+    <h5>飲食紀錄</h5>
+    <form action="/momofit/food_record" method="GET" class="row">
+        <input id="mydate" type="text" name="mydate" class="datepicker col s11">
+        <span class="col s1"><button type="submit" value="submit" name='submit-btn' class="btn waves-effect btn-right"><i class="material-icons">search</i></button></span>
     </form>
     <div class="record"><a class="btn-floating btn waves-effect waves-light modal-trigger btn-add" href="#modal-food_record"><i class="material-icons">add</i></a>
         {% if date %}
@@ -43,7 +43,7 @@
 
     <div id="modal-food_record" class="modal">
         <div class="modal-content">
-            <h5>新增飲食紀錄</h5><a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
+            <h5 class="modal-title">新增飲食紀錄</h5><a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
             
             <form name="add_food" action="/momofit/food_record/" method="POST">
             {% csrf_token %}

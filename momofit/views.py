@@ -19,25 +19,30 @@ def SignUp(request):
         history_form = HistoryForm(request.POST)
         if all([user_form.is_valid(), history_form.is_valid()]):
             user = user_form.save()
-            history = history_form.save(commit=False)
-            history.user = user
-            history.tdee = 10*history.weight + 6.25*history.height-5*user.age
+            height = request.POST['height']
+            weight = request.POST['weight']
+            push_pr = request.POST['push_pr']
+            squat_pr = request.POST['squat_pr']
+            lift_pr = request.POST['lift_pr']
+            actlevel = request.POST.get('actlevel')
+            fat = request.POST['fat']
+            date = datetime.datetime.now()
+            tdee = 10*int(weight) + 6.25*int(height)-5*user.age
             if(user.sex==1):
-                history.tdee += 5
+                tdee += 5
             else:
-                history.tdee -= 161
-            if history.actlevel==1:
-                history.tdee *= 1.2
-            elif history.actlevel==2:
-                history.tdee *= 1.375
-            elif history.actlevel==3:
-                history.tdee *= 1.55
-            elif history.actlevel==4:
-                history.tdee *= 1.725
+                tdee -= 161
+            if actlevel==1:
+                tdee *= 1.2
+            elif actlevel==2:
+                tdee *= 1.375
+            elif actlevel==3:
+                tdee *= 1.55
+            elif actlevel==4:
+                tdee *= 1.725
             else:
-                history.tdee *= 1.9          
-
-            history.save()
+                tdee *= 1.9          
+            History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user.id, fat, date)
             Menu.create_menu(user)
             new_user = authenticate(username=user_form.cleaned_data['username'],
                                     password=user_form.cleaned_data['password1'],

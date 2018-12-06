@@ -32,8 +32,12 @@ body{
   border:solid 1px rgba(0,0,0,0.54);
   vertical-align: middle;
 }
+@media only screen and (min-width: 960px) {
+  .block-content {
+    margin-left: 180px;
+  }
+}
 .block-content{
-  margin-left: 180px;
   margin-top: 34px;
   padding: 10px;
 }
@@ -85,34 +89,38 @@ body{
   width: 80%;
 }
 /* user profile */
-.info-title{
-  display: inline-block;
-}
 .splat-img{
   width:  200px;
 }
 .user-selfie-style{
-  width: 275px;
-  height: 400px;
+  width: 150px;
+  height: 200px;
   border-radius: 5px;
   border:solid 1px rgba(0,0,0,0.54);
-  /* vertical-align: middle; */
 }
-
 .information{
+  width: 75%;
+  padding:20px 0 0;
   display: inline-block;
-  /* float : left; */
-  padding:20px;
-}
-.selfie{
-  display: inline-block;
-  /* float : left; */
 }
 .work_freq{
   width: 600px;
   height: 400px;
 }
-
+.selfie{
+  display: inline-block;
+  vertical-align: top;
+  padding:20px 0 20px 20px;
+}
+.btn-personal-edit{
+  float: right;
+  margin-top: 30px;
+}
+#modal1{
+  top:4% !important;
+  height: 700px !important;
+  max-height: none !important;
+}
 
 /* menu */
 .menu-title{
