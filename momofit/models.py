@@ -118,6 +118,7 @@ class History(models.Model):
             weight = None
             fat = None
         else:
+            print(row)
             data = pd.DataFrame(list(row),
                                 columns=["id", "weight", "fat", "date"])
             data['week_first_day'] = data['date'].apply(lambda x: x - dt.timedelta(days=x.isoweekday() % 7))
