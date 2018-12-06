@@ -120,9 +120,7 @@ class Menu(models.Model):
         print(type(self.id))
         cur = connection.cursor()
         cur.callproc('CreateMenu_procedure', (self.id,))
-        results = cur.fetchall()
         cur.close()
-        return results
 
 class GymList(models.Model):
     gym_id = models.AutoField(db_column='gym_id', primary_key=True)
