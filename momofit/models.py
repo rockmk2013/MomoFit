@@ -251,12 +251,12 @@ class TrainRecord(models.Model):
         # add gym_record
         cursor.execute("select gym_id from gym_list where gym_list.name=%s;",[_gym])
         _gym_id = cursor.fetchall()
-        cursor.execute("insert into gym_record (user_id, gym_id, gr_date) values (%s,%s,%s);",[self.id, _gym_id, _date])
+        cursor.execute("insert into gym_record (user_id, gym_id) values (%s,%s);",[self.id, _gym_id])
         
         # add train_record
         cursor.execute("select item_id from item_list where item_list.item_name=%s;",[_item])
         _item_id = cursor.fetchall()
-        cursor.execute("select gr_id from gym_record where gym_record.gym_id = %s and gym_record.gr_date = %s and gym_record.user_id = %s;",[_gym_id, _date, self.id])
+        cursor.execute("select gr_id from gym_record order by gr_id desc limit 0,1;")
         _gr_id = cursor.fetchall()
         
         cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
