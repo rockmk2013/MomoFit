@@ -60,9 +60,9 @@ class History(models.Model):
 
 
     @staticmethod
-    def update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date):
+    def add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, user_id, fat, date):
         cur = connection.cursor()
-        cur.callproc('update_history', (height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date))
+        cur.callproc('add_history', (height, weight, push_pr, squat_pr, lift_pr, actlevel, user_id, fat, date))
         results = cur.fetchall()
         cur.close()
         return results

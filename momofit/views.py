@@ -26,23 +26,8 @@ def SignUp(request):
             lift_pr = request.POST['lift_pr']
             actlevel = request.POST.get('actlevel')
             fat = request.POST['fat']
-            date = datetime.datetime.now()
-            tdee = 10*int(weight) + 6.25*int(height)-5*user.age
-            if(user.sex==1):
-                tdee += 5
-            else:
-                tdee -= 161
-            if actlevel==1:
-                tdee *= 1.2
-            elif actlevel==2:
-                tdee *= 1.375
-            elif actlevel==3:
-                tdee *= 1.55
-            elif actlevel==4:
-                tdee *= 1.725
-            else:
-                tdee *= 1.9          
-            History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user.id, fat, date)
+            date = datetime.datetime.now()        
+            History.add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, user.id, fat, date)
             Menu.create_menu(user)
             new_user = authenticate(username=user_form.cleaned_data['username'],
                                     password=user_form.cleaned_data['password1'],
@@ -98,7 +83,6 @@ def Hello_momo(request):
         height = request.POST['height']
         weight = request.POST['weight']
         fat = request.POST['fat']
-        tdee = request.POST['TDEE']
         push_pr = request.POST['bench_press']
         squat_pr = request.POST['Squat']
         lift_pr = request.POST['Dead_lift']
@@ -106,7 +90,8 @@ def Hello_momo(request):
         if actlevel is None:
             actlevel = history[-1][7]
         date = datetime.datetime.now()
-        History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, request.user.id, fat, date)
+        History.add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, request.user.id, fat, date)
+        Menu.create_menu(request.user)
         history = History.get_history(request.user)
         sex = "生理男性" if request.user.sex == 1 else "生理女性"
         train_first_day, freq_count = History.get_train_freq(request.user)
