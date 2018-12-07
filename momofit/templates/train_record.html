@@ -1,10 +1,10 @@
 {% extends "base_generic.html" %}
 {% block content %}
 <div class="train_record">
-
-    <form action="/momofit/train_record/" method="GET">
-        <input id="mydate" type="text" name="mydate" class="datepicker">
-        <button type="submit" class="btn waves-effect">Search</button>
+    <h5>健身紀錄</h5>
+    <form action="/momofit/train_record/" method="GET" class="row">
+        <input id="mydate" type="text" name="mydate" class="datepicker col s11">
+        <button type="submit" class="btn waves-effect btn-right s1"><i class="material-icons">search</i></button>
     </form>
     <div class="record"><a class="btn-floating btn waves-effect waves-light modal-trigger btn-add" href="#modal-train_record"><i class="material-icons">add</i></a>
         {% if date %}
@@ -42,7 +42,7 @@
 
     <div id="modal-train_record" class="modal">
         <div class="modal-content">
-            <h5>新增健身紀錄</h5><a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
+            <h5 class="modal-title">新增健身紀錄</h5><a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
 
             <form name="add_train" action="/momofit/train_record/" method="POST">
                 {% csrf_token %}

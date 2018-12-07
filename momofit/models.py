@@ -3,7 +3,7 @@ from django.db import connection
 from django.contrib.auth.models import AbstractUser
 
 from cloudinary.models import CloudinaryField
-from django.db import connection#
+from django.db import connection
 import pandas as pd
 import datetime as dt
 # Create your models here.
@@ -54,18 +54,19 @@ class History(models.Model):
 
     def get_history(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM momofitfit.history where user_id = %s;",[self.id])
+        cursor.execute("SELECT * FROM history where user_id = %s;",[self.id])
         row = cursor.fetchall()
         return row
 
 
     @staticmethod
-    def update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date):
+    def add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, user_id, fat, date):
         cur = connection.cursor()
-        cur.callproc('update_history', (height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, user_id, fat, date))
+        cur.callproc('add_history', (height, weight, push_pr, squat_pr, lift_pr, actlevel, user_id, fat, date))
         results = cur.fetchall()
         cur.close()
         return results
+
     def get_train_freq(self):
         cursor = connection.cursor()
         cursor.execute("SELECT * from train_freq where user_id=%s and gr_date > CURDATE()- INTERVAL 49 DAY ;",[self.id])
@@ -84,7 +85,7 @@ class History(models.Model):
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM momofitfit.train_success WHERE user_id=%s and train_date BETWEEN SUBDATE(CURDATE(), INTERVAL 49 DAY) AND CURDATE() order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM train_success WHERE user_id=%s and train_date BETWEEN SUBDATE(CURDATE(), INTERVAL 49 DAY) AND CURDATE() order by train_date;",[self.id])
         row = cursor.fetchall()
 
         if len(row) == 0:
@@ -110,7 +111,7 @@ class History(models.Model):
     def get_weight_fat(self):
         cursor = connection.cursor()
         cursor.execute(
-            "SELECT * FROM momofitfit.get_weight WHERE user_id=%s ;",
+            "SELECT * FROM get_weight WHERE user_id=%s ;",
             [self.id])
         row = cursor.fetchall()
 
@@ -136,7 +137,7 @@ class Menu(models.Model):
     menu_id = models.AutoField(db_column='menu_id', primary_key=True)
     menu_weight = models.FloatField()
     menu_set = models.IntegerField()
-    menu_rep = models.CharField(max_length=5)
+    menu_rep = models.IntegerField()
     items = models.ForeignKey('ItemList', on_delete=models.CASCADE,db_column='item_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE,db_column='user_id')
     display = models.BooleanField(default=False)
@@ -146,28 +147,30 @@ class Menu(models.Model):
     
     def get_item_list(self):
         cursor = connection.cursor()
-        cursor.execute("select menu.menu_id,l.item_name from menu,item_list as l where menu.item_id=l.item_id and user_id=%s and display<>1;",[self.id])
+        cursor.execute("select menu.menu_id,item_list.item_name from menu,item_list where menu.item_id=item_list.item_id and user_id=%s and display<>1;",[self.id])
         row = cursor.fetchall()
         return row
+
     def get_menu(self):
         cursor = connection.cursor()
         cursor.execute("select item_name,item_type,menu_set,menu_rep,menu_weight,menu_id from menu,item_list where menu.item_id=item_list.item_id and user_id=%s and display=1;",[self.id])
         row = cursor.fetchall()
         return row
+
     def delete_menu_item(self):
         cursor = connection.cursor()
         cursor.execute("update menu set display=0 where menu_id=%s",[self])
+
     def add_menu_item(self):
         cursor = connection.cursor()
         cursor.execute("update menu set display=1 where menu_id in %s",[tuple(self)])
+
     @staticmethod
     def create_menu(self):
         # print(type(self.id))
         cur = connection.cursor()
         cur.callproc('CreateMenu_procedure', (self.id,))
-        results = cur.fetchall()
         cur.close()
-        return results
 
 class GymList(models.Model):
     gym_id = models.AutoField(db_column='gym_id', primary_key=True)
@@ -272,7 +275,7 @@ class FoodRecord(models.Model):
     food_id = models.ForeignKey(FoodItem, models.DO_NOTHING, db_column='food_id')  # Field name made lowercase.
     quantity = models.FloatField(db_column='quantity')  # Field name made lowercase.
     user = models.ForeignKey(User, models.DO_NOTHING, db_column='id')  # Field name made lowercase.
-    fr_date = models.DateField(db_column='fr_date')
+    fr_date = models.DateField(db_column='fr_date',default=False)
 
     class Meta:
         db_table = 'food_record'
