@@ -19,25 +19,15 @@ def SignUp(request):
         history_form = HistoryForm(request.POST)
         if all([user_form.is_valid(), history_form.is_valid()]):
             user = user_form.save()
-            history = history_form.save(commit=False)
-            history.user = user
-            history.tdee = 10*history.weight + 6.25*history.height-5*user.age
-            if(user.sex==1):
-                history.tdee += 5
-            else:
-                history.tdee -= 161
-            if history.actlevel==1:
-                history.tdee *= 1.2
-            elif history.actlevel==2:
-                history.tdee *= 1.375
-            elif history.actlevel==3:
-                history.tdee *= 1.55
-            elif history.actlevel==4:
-                history.tdee *= 1.725
-            else:
-                history.tdee *= 1.9          
-
-            history.save()
+            height = request.POST['height']
+            weight = request.POST['weight']
+            push_pr = request.POST['push_pr']
+            squat_pr = request.POST['squat_pr']
+            lift_pr = request.POST['lift_pr']
+            actlevel = request.POST.get('actlevel')
+            fat = request.POST['fat']
+            date = datetime.datetime.now()        
+            History.add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, user.id, fat, date)
             Menu.create_menu(user)
             new_user = authenticate(username=user_form.cleaned_data['username'],
                                     password=user_form.cleaned_data['password1'],
@@ -93,7 +83,6 @@ def Hello_momo(request):
         height = request.POST['height']
         weight = request.POST['weight']
         fat = request.POST['fat']
-        tdee = request.POST['TDEE']
         push_pr = request.POST['bench_press']
         squat_pr = request.POST['Squat']
         lift_pr = request.POST['Dead_lift']
@@ -101,7 +90,8 @@ def Hello_momo(request):
         if actlevel is None:
             actlevel = history[-1][7]
         date = datetime.datetime.now()
-        History.update_history(height, weight, push_pr, squat_pr, lift_pr, tdee, actlevel, request.user.id, fat, date)
+        History.add_history(height, weight, push_pr, squat_pr, lift_pr, actlevel, request.user.id, fat, date)
+        Menu.create_menu(request.user)
         history = History.get_history(request.user)
         sex = "生理男性" if request.user.sex == 1 else "生理女性"
         train_first_day, freq_count = History.get_train_freq(request.user)

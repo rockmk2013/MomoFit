@@ -1,272 +1,266 @@
 {% extends "base_generic.html" %}
 {% block content %}
-    <!-- {% if user.is_authenticated %} -->
-        {% load static %}
-        <h2>個人資料</h2>
-        <div class="info-content">
-            {% csrf_token %}
-            <div class="selfie">
-                {% load cloudinary %}
-                {% cloudinary user.user_pic format="jpg" width=600 height=800 crop="fill" class="user-selfie-style" %}
+    {% load static %}
+    <h5>個人資料</h5>
+    <div class="info-content teal lighten-5">
+        {% csrf_token %}
+        <div class="selfie">
+            {% load cloudinary %}
+            {% cloudinary user.user_pic format="jpg" width=600 height=800 crop="fill" class="user-selfie-style" %}
+        </div>
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <h5 class="modal-title">修改個人資料</h5>
+                <a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
+                <form action="/momofit/profile/" method="POST">
+                    {% csrf_token %}
+                    <h6>身高(cm)：</h6>
+                    <input type="text" name="height" value={{ height }} />
+                    <h6>體重(kg)：</h6>
+                    <input type="text" name="weight" value={{ weight }} />
+                    <h6>體脂率(%)：</h6>
+                    <input type="text" name="fat" value={{ fat }} />
+                    <h6>胸推個人紀錄(kg)：</h6>
+                    <input type="text" name="bench_press" value={{ bench_press }} />
+                    <h6>深蹲個人紀錄(kg)：</h6>
+                    <input type="text" name="Squat" value={{ Squat }} />
+                    <h6>硬舉個人紀錄(kg)：</h6>
+                    <input type="text" name="Dead_lift" value={{ Dead_lift }} />
+                    <h6>個人活動量：</h6>
+                    <div class="input-field col s12">
+                        <select name="act_value">
+                            <option value={{ actlevel }} disabled selected>
+                                {% if actlevel == 1 %} 久坐
+                                {% elif actlevel == 2 %} 輕量活動量
+                                {% elif actlevel == 3 %} 中度活動量
+                                {% elif actlevel == 4 %} 高度活動量
+                                {% else %} 非常高度活動量
+                                {% endif %}
+                            </option>
+                            <option value="1">久坐</option>
+                            <option value="2">輕量活動量</option>
+                            <option value="3">中度活動量</option>
+                            <option value="4">高度活動量</option>
+                            <option value="5">非常高度活動量</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">取消</a>
+                        <button type="submit" href="#!" class="modal-close waves-effect waves-green btn-flat">更新
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Modal Structure -->
-            <div id="modal1" class="modal">
-                <div class="modal-content">
-                    <h4>修改個人資料</h4>
-                    <form action="/momofit/profile/" method="POST">
-                        {% csrf_token %}
-                        <h6>身高(cm)：</h6>
-                        <input type="text" name="height" value={{ height }} />
-                        <h6>體重(gk)：</h6>
-                        <input type="text" name="weight" value={{ weight }} />
-                        <h6>體脂率(%)：</h6>
-                        <input type="text" name="fat" value={{ fat }} />
-                        <h6>TDEE：</h6>
-                        <input type="text" name="TDEE" value={{ TDEE }} />
-                        <h6>胸推個人紀錄(kg)：</h6>
-                        <input type="text" name="bench_press" value={{ bench_press }} />
-                        <h6>深蹲個人紀錄(kg)：</h6>
-                        <input type="text" name="Squat" value={{ Squat }} />
-                        <h6>硬舉個人紀錄(kg)：</h6>
-                        <input type="text" name="Dead_lift" value={{ Dead_lift }} />
-                        <h6>個人活動量：</h6>
-                        <div class="input-field col s12">
-                            <select name="act_value">
-                                <option value={{ actlevel }} disabled selected>
-                                    {% if actlevel == 1 %} 久坐
-                                    {% elif actlevel == 2 %} 輕量活動量
-                                    {% elif actlevel == 3 %} 中度活動量
-                                    {% elif actlevel == 4 %} 高度活動量
-                                    {% else %} 非常高度活動量
-                                    {% endif %}
-                                </option>
-                                <option value="1">久坐</option>
-                                <option value="2">輕量活動量</option>
-                                <option value="3">中度活動量</option>
-                                <option value="4">高度活動量</option>
-                                <option value="5">非常高度活動量</option>
-                            </select>
-                        </div>
-                        <br>
-                        <div class="modal-footer">
-                            <a href="#!" class="modal-close waves-effect waves-green btn-flat">取消</a>
-                            <button type="submit" href="#!" class="modal-close waves-effect waves-green btn-flat">更新
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="information row">
+            <div class="col s12 m6">
+                <p>姓名: {{ name }}</p>
+                <p>性別: {{ sex }}</p>
+                <p>年齡: {{ age }}</p>
+                <p>身高: {{ height }}</p>
+                <p>體重: {{ weight }} (kg)</p>
             </div>
+            <div class="col s12 m6">
+                <p>體脂肪: {{ fat|floatformat }} (%)</p>
+                <p>三項成績(B/D/S): {{ bench_press }}(kg)/{{ Dead_lift }}(kg)/{{ Squat }}(kg)</p>
+                <p>基礎代謝: {{ TDEE }}(kcal)</p>
+                <a class="waves-effect waves-light btn modal-trigger btn-personal-edit" href="#modal1"><i class="material-icons">create</i></a>
+            </div>
+        </div>
+    </div>
+    <h5>我的歷程</h5>
+    <hr/>
+    <div class="row card">
+        <div class="col s12 tab-container">
+            <ul class="tabs">
+            <li class="tab col s4"><a href="#test1"><div>菜單達成率</div><div class="tab-number">{{success_rate|default:"-"|last}}%</div></a></li>
+            <li class="tab col s4"><a class="active" href="#test2"><div>體重變化量 / 體脂變化量</div><div class="tab-number">{{fat_record|default:"-"|last}}% / {{weight_record|last}}%</div></a></li>
+            <li class="tab col s4"><a href="#test3"><div>健身頻率</div><div class="tab-number">{{freq_count|default:"-"|last}}次</div> </a></li>
+            </ul>
+        </div>
+        <div id="test1" class="col s12"><div id="container" style="width: 100%; height: 500px;"></div></div>
+        <div id="test2" class="col s12"> <div id="container_weight" style="width: 100%; height: 500px;"></div></div>
+        <div id="test3" class="col s12"><div id="train_freq_graph" style="width: 100%; height: 500px;"></div></div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var title = {
+                text: ''
+            };
+            var subtitle = {
+                text: ''
+            };
+            var xAxis = {
+                categories: [
+                    {% for day in week_first_day %}
+                        "{{day}}",
+                    {% endfor %}
+                ]
+            };
+            var yAxis = {
+                title: {
+                    text: 'success rate'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            };
 
-            <div class="information">
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">修改個人資料</a>
-                <h5>姓名: {{ name }}</h5>
-                <h5>性別: {{ sex }}</h5>
-                <h5>年齡: {{ age }}</h5>
-                <h5>身高: {{ height }}</h5>
-                <h5>體重: {{ weight }} (kg)</h5>
-                <h5>體脂肪: {{ fat|floatformat }} (%)</h5>
-                <h5>三項成績(B/D/S): {{ bench_press }}(kg)/{{ Dead_lift }}(kg)/{{ Squat }}(kg)</h5>
-                <h5>基礎代謝: {{ TDEE }}(kcal)</h5>
-            </div>
-        </div>
-        <h2>我的歷程</h2>
-        <hr/>
-        <div class="information-chart">
-            <div class="information-chart-1">
-                <h4>菜單達成率</h4>
-                <div id="container" style="width: 800px; height: 500px;"></div>
-            </div>
-            <div class="information-chart-2">
-                <h4>體重、體脂變化量</h4>
-                <div id="container_weight" style="width: 800px; height: 500px;"></div>
-            </div>
-            <div class="information-chart-2">
-                <h4>健身頻率</h4>
-                <div id="train_freq_graph" style="width: 800px; height: 500px;"></div>
-            </div>
-        </div>
-        </div>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var title = {
-                    text: '健身達成率折線圖'
-                };
-                var subtitle = {
+            var tooltip = {
+                valueSuffix: '%'
+            }
+
+            var legend = {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            };
+
+            var series = [{
+                name: '菜單達成率(%)',
+                data: {{success_rate}}
+            }];
+
+            var json = {};
+
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
+
+            $('#container').highcharts(json);
+        });
+
+        $(document).ready(function () {
+            var json_weight = {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
                     text: ''
-                };
-                var xAxis = {
+                },
+                xAxis: [{
                     categories: [
-                        {% for day in week_first_day %}
-                            "{{day}}",
+                        {% for day in weight_week %}
+                            "{{ day }}",
                         {% endfor %}
-                    ]
-                };
-                var yAxis = {
-                    title: {
-                        text: 'success rate'
-                    },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                };
-
-                var tooltip = {
-                    valueSuffix: '%'
-                }
-
-                var legend = {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
-                };
-
-                var series = [{
-                    name: '菜單達成率(%)',
-                    data: {{success_rate}}
-                }];
-
-                var json = {};
-
-                json.title = title;
-                json.subtitle = subtitle;
-                json.xAxis = xAxis;
-                json.yAxis = yAxis;
-                json.tooltip = tooltip;
-                json.legend = legend;
-                json.series = series;
-
-                $('#container').highcharts(json);
-            });
-
-            $(document).ready(function () {
-               var json_weight = {
-                    chart: {
-                        zoomType: 'xy'
-                    },
-                    title: {
-                        text: '體重、體脂變化量'
-                    },
-                    xAxis: [{
-                        categories: [
-                            {% for day in weight_week %}
-                                "{{ day }}",
-                            {% endfor %}
-                        ],
-                        crosshair: true
-                    }],
-                    yAxis: [{ // Primary yAxis
-                        labels: {
-                            format: '{value} kg',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
-                            }
-                        },
-                        title: {
-                            text: 'Weight',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
-                            }
-                        },
-                        opposite: true
-
-                    }, { // Secondary yAxis
-                        labels: {
-                            format: '{value}%',
-                            style: {
-                                color: Highcharts.getOptions().colors[0]
-                            }
-                        },
-                        title: {
-                            text: 'Fat',
-                            style: {
-                                color: Highcharts.getOptions().colors[0]
-                            }
+                    ],
+                    crosshair: true
+                }],
+                yAxis: [{ // Primary yAxis
+                    labels: {
+                        format: '{value} kg',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
                         }
-                    }],
+                    },
+                    title: {
+                        text: 'Weight',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    opposite: true
+
+                }, { // Secondary yAxis
+                    labels: {
+                        format: '{value}%',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    title: {
+                        text: 'Fat',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    }
+                }],
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    name: 'fat',
+                    type: 'spline',
+                    yAxis: 1,
+                    data: {{ fat_record }},
                     tooltip: {
-                        shared: true
-                    },
-                    series: [{
-                        name: 'fat',
-                        type: 'spline',
-                        yAxis: 1,
-                        data: {{ fat_record }},
-                        tooltip: {
-                            valueSuffix: '%'
-                        }
+                        valueSuffix: '%'
+                    }
 
-                    }, {
-                        name: 'Weight',
-                        type: 'spline',
-                        data: {{ weight_record }},
-                        tooltip: {
-                            valueSuffix: 'kg'
-                        }
-                    }]
-                };
-                $('#container_weight').highcharts(json_weight);
-            });
+                }, {
+                    name: 'Weight',
+                    type: 'spline',
+                    data: {{ weight_record }},
+                    tooltip: {
+                        valueSuffix: 'kg'
+                    }
+                }]
+            };
+            $('#container_weight').highcharts(json_weight);
+        });
 
-            $(document).ready(function () {
-                var title = {
-                    text: '健身頻率折線圖'
-                };
-                var subtitle = {
-                    text: ''
-                };
-                var xAxis = {
-                    categories: [
-                        {% for day in train_first_day %}
-                            "{{day}}",
-                        {% endfor %}
-                    ]
-                };
-                var yAxis = {
-                    title: {
-                        text: 'Frequency'
-                    },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                };
+        $(document).ready(function () {
+            var title = {
+                text: ''
+            };
+            var subtitle = {
+                text: ''
+            };
+            var xAxis = {
+                categories: [
+                    {% for day in train_first_day %}
+                        "{{day}}",
+                    {% endfor %}
+                ]
+            };
+            var yAxis = {
+                title: {
+                    text: 'Frequency'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            };
 
-                var tooltip = {
-                    valueSuffix: ''
-                }
+            var tooltip = {
+                valueSuffix: ''
+            }
 
-                var legend = {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
-                };
+            var legend = {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            };
 
-                var series = [{
-                    name: '該周健身次數',
-                    data: {{freq_count}}
-                }];
+            var series = [{
+                name: '該周健身次數',
+                data: {{freq_count}}
+            }];
 
-                var json = {};
+            var json = {};
 
-                json.title = title;
-                json.subtitle = subtitle;
-                json.xAxis = xAxis;
-                json.yAxis = yAxis;
-                json.tooltip = tooltip;
-                json.legend = legend;
-                json.series = series;
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
 
-                $('#train_freq_graph').highcharts(json);
-            });
-        </script>
-        <!-- {% else %} -->
-        <!-- <h2>您尚未登入!</h2>  -->
-        <!-- {% endif %}   -->
-
+            $('#train_freq_graph').highcharts(json);
+        });
+    </script>
 {% endblock %}
