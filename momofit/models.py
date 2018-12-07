@@ -69,15 +69,15 @@ class History(models.Model):
 
     def get_train_freq(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * from train_freq where user_id=%s and gr_date > CURDATE()- INTERVAL 49 DAY ;",[self.id])
+        cursor.execute("SELECT * from train_freq where user_id=%s  ;",[self.id])
         row = cursor.fetchall()
         #print(row)
         if len(row) == 0:
             train_first_day = None
             freq_count = None
         else:    
-            data = pd.DataFrame(list(row),columns=["gr_id","gr_date","gym_id","user_id"])
-            data['train_first_day'] = data['gr_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
+            data = pd.DataFrame(list(row),columns=["train_date","gr_id","gym_id","user_id"])
+            data['train_first_day'] = data['train_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
             tr_data = data[['train_first_day','gr_id']].groupby(['train_first_day']).agg(['count']).reset_index()
             train_first_day = tr_data['train_first_day']
             freq_count = tr_data['gr_id']['count'].tolist()
@@ -85,7 +85,7 @@ class History(models.Model):
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM train_success WHERE user_id=%s and train_date BETWEEN SUBDATE(CURDATE(), INTERVAL 49 DAY) AND CURDATE() order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM train_success WHERE user_id=%s order by train_date;",[self.id])
         row = cursor.fetchall()
 
         if len(row) == 0:
@@ -189,7 +189,7 @@ class GymRecord(models.Model):
     gr_id = models.AutoField(db_column='gr_id', primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', null=False)
     gym_id = models.ForeignKey(GymList, on_delete=models.CASCADE, db_column='gym_id', null=False)
-    gr_date = models.DateTimeField(db_column='gr_date', null=False)
+    #gr_date = models.DateTimeField(db_column='gr_date', null=False)
 
     class Meta:
         db_table = 'gym_record'
