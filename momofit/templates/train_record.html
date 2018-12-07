@@ -16,7 +16,9 @@
             <thead>
                 <tr>
                     <th>日期</th>
+                    <th>健身房</th>
                     <th>項目</th>
+                    <th>次數/組</th>
                     <th>重量</th>
                     <th>組數</th>
                     <th></th>
@@ -29,6 +31,8 @@
                     <td>{{date.1}}</td>
                     <td>{{date.2}}</td>
                     <td>{{date.3}}</td>
+                    <td>{{date.4}}</td>
+                    <td>{{date.5}}</td>
                     <td>
                         <span class="btn-floating btn waves-effect waves-light btn-right delete-menu-btn">
                             <i class="material-icons">delete</i>
@@ -44,17 +48,26 @@
         <div class="modal-content">
             <h5>新增健身紀錄</h5><a href="#!" class="modal-close waves-effect waves-green btn btn-right"><i class="material-icons">close</i></a>
 
-            <form name="add_train" action="/momofit/train_record/" method="POST">
+            <form name="add_train" id="add_train" action="/momofit/train_record/" method="POST">
                 {% csrf_token %}
                 <h6>日期</h6>
-                <input type="text" name="select_date" class="datepicker">
-                <h6>動作</h6>
-                <select name="select-item">
-                    <option value="0" disabled selected>movement</option>
-                    {% for item in item_list %}
-                    <option value="{{item}}">{{item.0}}</option>
+                <input type="text" name="select_date" id="select_date" class="datepicker">
+                <h6>健身房</h6>
+                <select name="select_gym" type="text">
+                    <option value="0" disabled selected>gym</option>
+                    {% for gym in gym_list %}
+                    <option value="{{gym.0}}">{{gym.0}}</option>
                     {% endfor %}
                 </select>
+                <h6>動作</h6>
+                <select name="select_item" type="text">
+                    <option value="0" disabled selected>movement</option>
+                    {% for item in item_list %}
+                    <option value="{{item.0}}">{{item.0}}</option>
+                    {% endfor %}
+                </select>
+                <h6>次數/組</h6>
+                <input type="text" name="select_rep" value="5">
                 <h6>重量</h6>
                 <input type="text" name="select_weight" value="30">
                 <h6>組數</h6>

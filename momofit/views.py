@@ -156,19 +156,10 @@ def delete_menu(request):
 
 @login_required(login_url='/')
 def Train_record(request):
-    if request.method == "POST":
-        add = request.POST.getlist("add_train")
-        """
-        add_date = request.POST["select_date"]
-        add_item = request.POST["select_item"]
-        add_weight= request.POST["select_weight"]
-        add_train_set = request.POST["select_train_set"]
-        """
-        
-
-    #template = get_template('train_record.html')
+    # GET
     record = TrainRecord.get_record(request.user)
     item_list = TrainRecord.get_item_list(request.user)
+    gym_list = TrainRecord.get_gym_list(request.user)
     train_set = range(1,11)
     try:
         date = request.GET['mydate']
@@ -177,15 +168,26 @@ def Train_record(request):
         pass
     context = {'record':record,
                 'item_list':item_list,
+                'gym_list':gym_list,
                 'train_set':train_set}
-    #html = template.render(locals())
-    #return HttpResponse(html)
+
+    if request.method == "POST": #add train record
+        add = {'_date':request.POST['select_date'],
+                '_gym':request.POST['select_gym'],
+                '_item':request.POST['select_item'],
+                '_rep':request.POST['select_rep'],
+                '_weight':request.POST['select_weight'],
+                '_train_set':request.POST['select_train_set']}
+        
+        TrainRecord.add_record(request.user,add['_date'],add['_gym'],add['_item'],add['_rep'],add['_weight'],add['_train_set'])
+        record = TrainRecord.get_record(request.user)
+        context['record'] = record
+
     return render(request,'train_record.html',context=context)
 
 
 @login_required(login_url='/')
 def Food_record(request):
-    #template = get_template('food_record.html')
     record = FoodRecord.get_record(request.user)
     list = FoodRecord.get_food_list(request.user)
     list = [i for i in list]
@@ -209,6 +211,4 @@ def Food_record(request):
                 'store_list':store_list,
                 'quantity':quantity,
                 'food_dict':food_dict}
-    #html = template.render(locals())
-    #return HttpResponse(html)
     return render(request, 'food_record.html', context=context)
