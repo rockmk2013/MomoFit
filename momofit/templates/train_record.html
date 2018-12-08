@@ -27,17 +27,24 @@
             <tbody>
                 {% for date in record %}
                 <tr>
-                    <td>{{date.0}}</td>
-                    <td>{{date.1}}</td>
-                    <td>{{date.2}}</td>
-                    <td>{{date.3}}</td>
-                    <td>{{date.4}}</td>
-                    <td>{{date.5}}</td>
-                    <td>
+                    <form action="/momofit/train_record/" method="GET">
+                        <td>{{date.0}}</td>
+                        <td>{{date.1}}</td>
+                        <td>{{date.2}}</td>
+                        <td>{{date.3}}</td>
+                        <td>{{date.4}}</td>
+                        <td>{{date.5}}</td>
+                        <td>
+                            <button name="delete" id="delete" value="{{date.6}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </td>
+                    </form>                    
+                    <!-- <td>
                         <span class="btn-floating btn waves-effect waves-light btn-right delete-menu-btn">
                             <i class="material-icons">delete</i>
                         </span>
-                    </td>
+                    </td> -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -81,6 +88,5 @@
             </form>
         </div>
     </div>
-    
 </div>
 {% endblock %}

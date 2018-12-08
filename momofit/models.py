@@ -223,7 +223,7 @@ class TrainRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set, tr.train_id from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -261,6 +261,9 @@ class TrainRecord(models.Model):
         
         cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
 
+    def delete_train_record(self,_train_id):
+        cursor = connection.cursor()
+        cursor.execute("delete from train_record where train_id=%s",[_train_id])
 
     def __str__(self):
         return self.train_id

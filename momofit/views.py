@@ -151,6 +151,7 @@ def Train_record(request):
     item_list = TrainRecord.get_item_list(request.user)
     gym_list = TrainRecord.get_gym_list(request.user)
     train_set = range(1,11)
+    # search
     try:
         date = request.GET['mydate']
         record = TrainRecord.search(request.user,date)
@@ -160,6 +161,11 @@ def Train_record(request):
                 'item_list':item_list,
                 'gym_list':gym_list,
                 'train_set':train_set}
+    if 'delete' in request.GET:
+        _train_id = request.GET['delete']
+        TrainRecord.delete_train_record(request.user, _train_id)
+        record = TrainRecord.get_record(request.user)
+        context['record'] = record
 
     if request.method == "POST": #add train record
         add = {'_date':request.POST['select_date'],
