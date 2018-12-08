@@ -301,7 +301,7 @@ class FoodRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,store.store_name,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi,store where fi.food_id=fr.food_id and store.store_id=fi.store_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food,fr.quantity,fi.kcal,fr.fr_id from food_record as fr,food_item as fi,store where fi.food_id=fr.food_id and store.store_id=fi.store_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -324,6 +324,10 @@ class FoodRecord(models.Model):
         cursor.execute("select food_id from food_item where food = %s;",[_food])
         _food_id = cursor.fetchall()
         cursor.execute("insert into food_record (quantity,food_id,id,fr_date) values (%s,%s,%s,%s);",[_quantity,_food_id,self.id,_date])
+
+    def delete_food_record(self,_fr_id):
+        cursor = connection.cursor()
+        cursor.execute("delete from food_record where fr_id=%s;",[_fr_id])
 
     def __str__(self):
         return self.fr_id

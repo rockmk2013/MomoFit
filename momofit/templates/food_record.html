@@ -2,6 +2,7 @@
 {% block content %}
 <div class="food_record">
     <h5>飲食紀錄</h5>
+    <h5>{{test}}</h5>
     <form action="/momofit/food_record" method="GET" class="row">
         <input id="mydate" type="text" name="mydate" class="datepicker col s11">
         <span class="col s1"><button type="submit" value="submit" name='submit-btn' class="btn waves-effect btn-right"><i class="material-icons">search</i></button></span>
@@ -27,16 +28,21 @@
             <tbody>
                 {% for date in record %}
                 <tr>
+                    <form action="/momofit/food_record/" method="GET">
                     <td>{{date.0}}</td>
                     <td>{{date.1}}</td>
                     <td>{{date.2}}</td>
                     <td>{{date.3}}</td>
                     <td>{{date.4}}</td>
                     <td>
-                    <span class="btn-floating btn waves-effect waves-light btn-right delete-menu-btn">
+                    <button name="delete" id="delete" value="{{date.5}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn"><i class="material-icons">delete</i></button>
+                    </form>    
+                    </td>
+                    <!--
+                    <span class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
                         <i class="material-icons">delete</i>
                     </span>
-                    </td>
+                    -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -78,4 +84,26 @@
         </div>
     </div>
 </div>
+<!-- <script>
+        $(".delete-record-btn").on('click',function(){
+            var td = $(this);
+            $.ajax({
+                type:"POST",
+                url:"/momofit/delete_food/",
+                data: {
+                    'food-record-id': $(this).data().id
+                    },
+                dataType:'json',
+                success: function(result){
+                    td.parent().parent().fadeOut( 500, function() {
+                        $(this).remove();
+                    });
+                },
+                error: function(e){
+                    console.log(e)
+                }
+            });
+            return false;
+        });
+    </script> -->
 {% endblock %}

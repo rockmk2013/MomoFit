@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import CustomUserCreationForm,HistoryForm,MenuForm,FoodForm
+from .forms import CustomUserCreationForm,HistoryForm,MenuForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
@@ -192,7 +192,7 @@ def Food_record(request):
             food_dict[s[0]].append(s[1])
         else:
             food_dict[s[0]] = [s[1]]
-
+    # search
     try:
         date = request.GET['mydate']
         record = FoodRecord.search(request.user,date)
@@ -205,6 +205,12 @@ def Food_record(request):
                 'quantity':quantity,
                 'food_dict':food_dict
                 }
+    if 'delete' in request.GET:
+        _fr_id = request.GET['delete']
+        FoodRecord.delete_food_record(request.user, _fr_id)
+        record = FoodRecord.get_record(request.user)
+        context['record'] = record
+
     if request.method == "POST": #add food record
         add = {'_date':request.POST['select_date'],
                 '_food':request.POST['select_food'],
@@ -214,3 +220,9 @@ def Food_record(request):
         context['record'] = record
 
     return render(request, 'food_record.html', context=context)
+
+@csrf_exempt
+def delete_food(request):
+    a = {"result":"post_success"}
+    FoodRecord.delete_food_record(request.POST['food-record-id'])
+    return HttpResponse(json.dumps(a), content_type='application/json')
