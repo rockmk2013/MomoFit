@@ -313,12 +313,17 @@ class FoodRecord(models.Model):
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s and fr.fr_date=%s;",[self.id,date])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi,store where fi.food_id=fr.food_id and fr.id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
         row = cursor.fetchall()
         return row
 
-    def add(self):
+    def add_record(self, _date, _food, _quantity):
+        ### without sp
         cursor = connection.cursor()
-        
+        # add food_record
+        cursor.execute("select food_id from food_item where food = %s;",[_food])
+        _food_id = cursor.fetchall()
+        cursor.execute("insert into food_record (quantity,food_id,id,fr_date) values (%s,%s,%s,%s);",[_quantity,_food_id,self.id,_date])
+
     def __str__(self):
         return self.fr_id

@@ -50,27 +50,28 @@
             <form name="add_food" action="/momofit/food_record/" method="POST">
             {% csrf_token %}
             <h6>日期</h6>
-            <input type="text" name="date" class="datepicker">
+            <input type="text" name="select_date" class="datepicker">
             <h6>店家</h6>
             <select name="select_store">
                 <option value="0" disabled selected>store</option>
-                {% for store in store_list%}
+                {% for store in store_list %}
                 <option value="{{store}}">{{ store }}</option>
                 {% endfor %}
             </select>
             <h6>餐點</h6>
             <select name="select_food">
                 <option value="0" disabled selected>food</option>
+                {% for food in food_list %}
+                <option value="{{food}}">{{food}}</option>
+                {% endfor %}
             </select>
             <h6>數量</h6>
-            <div name="quantity" class="input-field col s12">
-                <select>
-                <option value="0" disabled selected>Choose your option</option>
-                {% for i in quantity %}
-                <option value={{i}}>{{i}}</option>
-                {% endfor %}
-                </select> 
-            </div>
+            <select name="select_quantity">
+            <option value="0" disabled selected>quantity</option>
+            {% for i in quantity %}
+            <option value={{i}}>{{i}}</option>
+            {% endfor %}
+            </select>
             <button type="submit" class="btn waves-effect btn-right">新增</button>
             </form>
             

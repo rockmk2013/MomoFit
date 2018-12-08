@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import CustomUserCreationForm,HistoryForm,MenuForm
+from .forms import CustomUserCreationForm,HistoryForm,MenuForm,FoodForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
@@ -178,12 +178,14 @@ def Train_record(request):
 
 @login_required(login_url='/')
 def Food_record(request):
+    # GET
     record = FoodRecord.get_record(request.user)
     list = FoodRecord.get_food_list(request.user)
     list = [i for i in list]
     store_list = set([i[0] for i in list])
+    food_list = set(i[1] for i in list)
     quantity = range(7)
-    
+
     food_dict = {}
     for s in list:
         if s[0] in food_dict:
@@ -199,6 +201,16 @@ def Food_record(request):
     context = {'record':record,
                 'list':list,
                 'store_list':store_list,
+                'food_list':food_list,
                 'quantity':quantity,
-                'food_dict':food_dict}
+                'food_dict':food_dict
+                }
+    if request.method == "POST": #add food record
+        add = {'_date':request.POST['select_date'],
+                '_food':request.POST['select_food'],
+                '_quantity':request.POST['select_quantity']}
+        FoodRecord.add_record(request.user,add['_date'],add['_food'],add['_quantity'])
+        record = FoodRecord.get_record(request.user)
+        context['record'] = record
+
     return render(request, 'food_record.html', context=context)
