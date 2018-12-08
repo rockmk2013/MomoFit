@@ -76,16 +76,17 @@ class History(models.Model):
             train_first_day = None
             freq_count = None
         else:    
-            data = pd.DataFrame(list(row),columns=["train_date","gr_id","gym_id","user_id"])
+            data = pd.DataFrame(list(row),columns=["train_date","user_id"])
+            data = data.drop_duplicates()
             data['train_first_day'] = data['train_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
-            tr_data = data[['train_first_day','gr_id']].groupby(['train_first_day']).agg(['count']).reset_index()
+            tr_data = data[['train_first_day','train_date']].groupby(['train_first_day']).agg(['count']).reset_index()
             train_first_day = tr_data['train_first_day']
-            freq_count = tr_data['gr_id']['count'].tolist()
+            freq_count = tr_data['train_date']['count'].tolist()
         return train_first_day,freq_count
 
     def get_records(self):
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM train_success WHERE user_id=%s order by train_date;",[self.id])
+        cursor.execute("SELECT * FROM train_success WHERE user_id=%s ;",[self.id])
         row = cursor.fetchall()
 
         if len(row) == 0:
