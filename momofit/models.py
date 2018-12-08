@@ -206,7 +206,7 @@ class TrainRecord(models.Model):
     rep = models.IntegerField(db_column='rep', null=False)
     weight = models.FloatField(db_column='weight', null=False)
     train_set = models.IntegerField(db_column='train_set', null=False)
-    # gr_id = models.ForeignKey(GymRecord, on_delete=models.CASCADE, db_column='gr_id')
+    gym_name = models.CharField(db_column='gym_name', max_length=30, null=False)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
     item_id = models.ForeignKey(ItemList, on_delete=models.CASCADE, db_column='item_id')
 
@@ -215,47 +215,25 @@ class TrainRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        # cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set, tr.train_id from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
-        cursor.execute("select tr.train_date,item_list.item_name,tr.rep,tr.weight,tr.train_set,tr.train_id from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        cursor.execute("select tr.train_date,tr.gym_name,item_list.item_name,tr.rep,tr.weight,tr.train_set,tr.train_id from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s order by tr.train_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
     def search(self,date):
         cursor = connection.cursor()
-        # cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s and tr.train_date=%s;",[self.id,date])
-        cursor.execute("select tr.train_date,item_list.item_name,tr.rep,tr.weight,tr.train_set from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s and tr.train_date=%s;",[self.id, date])
+        cursor.execute("select tr.train_date,tr.gym_name,item_list.item_name,tr.rep,tr.weight,tr.train_set from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s and tr.train_date=%s;",[self.id, date])
         row = cursor.fetchall()
         return row
     
     def get_item_list(self):
         cursor = connection.cursor()
-        cursor.execute("select item_list.item_name from item_list;")
+        cursor.execute("select item_list.item_id,item_list.item_name from item_list;")
         row = cursor.fetchall()
         return row
 
-    #應該要被刪掉 先留著一下
-    def get_gym_list(self):
+    def add_record(self, _date, _gym, _item, _rep, _weight, _train_set):
         cursor = connection.cursor()
-        cursor.execute("select distinct gym_list.name from gym_list;")
-        row = cursor.fetchall()
-        return row
-
-    # def add_record(self, _date, _gym, _item, _rep, _weight, _train_set):
-    def add_record(self, _date, _item, _rep, _weight, _train_set):
-        ### without sp
-        cursor = connection.cursor()
-        ## add gym_record
-        # cursor.execute("select gym_id from gym_list where gym_list.name=%s;",[_gym])
-        # _gym_id = cursor.fetchall()
-        # cursor.execute("insert into gym_record (user_id, gym_id) values (%s,%s);",[self.id, _gym_id])
-        
-        # add train_record
-        cursor.execute("select item_id from item_list where item_list.item_name=%s;",[_item])
-        _item_id = cursor.fetchall()
-        #cursor.execute("select gr_id from gym_record order by gr_id desc limit 0,1;")
-        #_gr_id = cursor.fetchall()
-        # cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
-        cursor.execute("insert into train_record (train_date,rep,weight,train_set,item_id,user_id values (%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_item_id,self.id]) 
+        cursor.execute("insert into train_record (train_date,rep,weight,train_set,item_id,user_id,gym_name) values (%s,%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_item,self.id, _gym]) 
 
     def delete_train_record(self,_train_id):
         cursor = connection.cursor()
@@ -265,9 +243,9 @@ class TrainRecord(models.Model):
         return self.train_id
 
 class Store(models.Model):
-    store_id = models.AutoField(db_column='store_id', primary_key=True)  # Field name made lowercase.
-    store_name = models.CharField(db_column='store_name', max_length=50)  # Field name made lowercase.
-    address = models.CharField(db_column='address', max_length=50)  # Field name made lowercase.
+    store_id = models.AutoField(db_column='store_id', primary_key=True)
+    store_name = models.CharField(db_column='store_name', max_length=50)
+    address = models.CharField(db_column='address', max_length=50)
 
     class Meta:
         db_table = 'store'
@@ -276,10 +254,10 @@ class Store(models.Model):
         return self.store_name
 
 class FoodItem(models.Model):
-    food_id = models.AutoField(db_column='food_id', primary_key=True)  # Field name made lowercase.
-    food = models.CharField(db_column='food', max_length=50)  # Field name made lowercase.
-    kcal = models.FloatField(db_column='kcal')  # Field name made lowercase.
-    store = models.ForeignKey(Store, models.DO_NOTHING, db_column='store_id')  # Field name made lowercase.
+    food_id = models.AutoField(db_column='food_id', primary_key=True)
+    food = models.CharField(db_column='food', max_length=50)
+    kcal = models.FloatField(db_column='kcal')
+    store = models.ForeignKey(Store, models.DO_NOTHING, db_column='store_id')
 
     class Meta:
         db_table = 'food_item'
@@ -289,10 +267,10 @@ class FoodItem(models.Model):
 
 
 class FoodRecord(models.Model):
-    fr_id = models.AutoField(db_column='fr_id', primary_key=True)  # Field name made lowercase.
-    food_id = models.ForeignKey(FoodItem, models.DO_NOTHING, db_column='food_id')  # Field name made lowercase.
-    quantity = models.FloatField(db_column='quantity')  # Field name made lowercase.
-    user = models.ForeignKey(User, models.DO_NOTHING, db_column='id')  # Field name made lowercase.
+    fr_id = models.AutoField(db_column='fr_id', primary_key=True)
+    food_id = models.ForeignKey(FoodItem, models.DO_NOTHING, db_column='food_id')
+    quantity = models.FloatField(db_column='quantity')
+    user = models.ForeignKey(User, models.DO_NOTHING, db_column='id')
     fr_date = models.DateField(db_column='fr_date',default=False)
 
     class Meta:
@@ -317,9 +295,7 @@ class FoodRecord(models.Model):
         return row
 
     def add_record(self, _date, _food, _quantity):
-        ### without sp
         cursor = connection.cursor()
-        # add food_record
         cursor.execute("select food_id from food_item where food = %s;",[_food])
         _food_id = cursor.fetchall()
         cursor.execute("insert into food_record (quantity,food_id,id,fr_date) values (%s,%s,%s,%s);",[_quantity,_food_id,self.id,_date])

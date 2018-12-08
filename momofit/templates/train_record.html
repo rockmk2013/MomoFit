@@ -16,7 +16,7 @@
             <thead>
                 <tr>
                     <th>日期</th>
-                    <!-- <th>健身房</th> -->
+                    <th>健身房</th>
                     <th>項目</th>
                     <th>次數/組</th>
                     <th>重量</th>
@@ -33,9 +33,9 @@
                         <td>{{date.2}}</td>
                         <td>{{date.3}}</td>
                         <td>{{date.4}}</td>
-                        <!-- <td>{{date.5}}</td> -->
+                        <td>{{date.5}}</td>
                         <td>
-                            <button name="delete" id="delete" value="{{date.5}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
+                            <button name="delete" id="delete" value="{{date.6}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
                                 <i class="material-icons">delete</i>
                             </button>
                         </td>
@@ -60,17 +60,12 @@
                 <h6>日期</h6>
                 <input type="text" name="select_date" id="select_date" class="datepicker">
                 <h6>健身房</h6>
-                <select name="select_gym" type="text">
-                    <option value="0" disabled selected>gym</option>
-                    {% for gym in gym_list %}
-                    <option value="{{gym.0}}">{{gym.0}}</option>
-                    {% endfor %}
-                </select>
+                <input type="text" name="select_gym">
                 <h6>動作</h6>
                 <select name="select_item" type="text">
                     <option value="0" disabled selected>movement</option>
                     {% for item in item_list %}
-                    <option value="{{item.0}}">{{item.0}}</option>
+                    <option value="{{item.0}}">{{item.1}}</option>
                     {% endfor %}
                 </select>
                 <h6>次數/組</h6>

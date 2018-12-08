@@ -137,7 +137,6 @@ def Menu_page(request):
         context={'menu_form':menu_form,'item_none':item_none,'menu_items':menu_items}
     return render(request, 'menu.html', context=context)
 
-# @login_required(login_url='/')
 @csrf_exempt
 def delete_menu(request):
     a = {"result":"post_success"}
@@ -149,7 +148,6 @@ def Train_record(request):
     # GET
     record = TrainRecord.get_record(request.user)
     item_list = TrainRecord.get_item_list(request.user)
-    gym_list = TrainRecord.get_gym_list(request.user)
     train_set = range(1,11)
     # search
     try:
@@ -159,7 +157,6 @@ def Train_record(request):
         pass
     context = {'record':record,
                 'item_list':item_list,
-                'gym_list':gym_list,
                 'train_set':train_set}
     if 'delete' in request.GET:
         _train_id = request.GET['delete']
