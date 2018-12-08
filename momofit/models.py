@@ -223,7 +223,7 @@ class TrainRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set, tr.train_id from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -251,16 +251,19 @@ class TrainRecord(models.Model):
         # add gym_record
         cursor.execute("select gym_id from gym_list where gym_list.name=%s;",[_gym])
         _gym_id = cursor.fetchall()
-        cursor.execute("insert into gym_record (user_id, gym_id, gr_date) values (%s,%s,%s);",[self.id, _gym_id, _date])
+        cursor.execute("insert into gym_record (user_id, gym_id) values (%s,%s);",[self.id, _gym_id])
         
         # add train_record
         cursor.execute("select item_id from item_list where item_list.item_name=%s;",[_item])
         _item_id = cursor.fetchall()
-        cursor.execute("select gr_id from gym_record where gym_record.gym_id = %s and gym_record.gr_date = %s;",[_gym_id, _date])
+        cursor.execute("select gr_id from gym_record order by gr_id desc limit 0,1;")
         _gr_id = cursor.fetchall()
         
         cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
 
+    def delete_train_record(self,_train_id):
+        cursor = connection.cursor()
+        cursor.execute("delete from train_record where train_id=%s",[_train_id])
 
     def __str__(self):
         return self.train_id
@@ -301,7 +304,7 @@ class FoodRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food,fr.quantity,fi.kcal,fr.fr_id from food_record as fr,food_item as fi,store where fi.food_id=fr.food_id and store.store_id=fi.store_id and fr.id=%s order by fr.fr_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -313,12 +316,21 @@ class FoodRecord(models.Model):
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi where fi.food_id=fr.food_id and fr.id=%s and fr.fr_date=%s;",[self.id,date])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food,fr.quantity,fi.kcal from food_record as fr,food_item as fi,store where fi.food_id=fr.food_id and fr.id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
         row = cursor.fetchall()
         return row
 
-    def add(self):
+    def add_record(self, _date, _food, _quantity):
+        ### without sp
         cursor = connection.cursor()
-        
+        # add food_record
+        cursor.execute("select food_id from food_item where food = %s;",[_food])
+        _food_id = cursor.fetchall()
+        cursor.execute("insert into food_record (quantity,food_id,id,fr_date) values (%s,%s,%s,%s);",[_quantity,_food_id,self.id,_date])
+
+    def delete_food_record(self,_fr_id):
+        cursor = connection.cursor()
+        cursor.execute("delete from food_record where fr_id=%s;",[_fr_id])
+
     def __str__(self):
         return self.fr_id
