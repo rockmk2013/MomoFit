@@ -249,7 +249,7 @@ class FoodRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal,fr.food_id from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and store.store_id=fi.store_id and fr.user_id=%s order by fr.fr_date desc limit 7;",[self.id])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal,fr.food_id,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and store.store_id=fi.store_id and fr.user_id=%s order by fr.fr_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -261,7 +261,7 @@ class FoodRecord(models.Model):
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and fr.user_id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and fr.user_id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
         row = cursor.fetchall()
         return row
 

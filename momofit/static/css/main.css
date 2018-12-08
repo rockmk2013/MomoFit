@@ -169,3 +169,14 @@ body{
 .tabs .tab a.active .tab-number{
   font-weight: 600;
 }
+
+#modal-train_record,#modal-food_record{
+  width: 85% !important;
+}
+.btn-margin-bottom{
+  margin-bottom:20px;
+}
+.mute{
+  color:grey;
+  font-size:0.8em;
+}
