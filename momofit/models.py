@@ -172,6 +172,7 @@ class Menu(models.Model):
         cur.callproc('CreateMenu_procedure', (self.id,))
         cur.close()
 
+#應該要被刪掉 先留著一下
 class GymList(models.Model):
     gym_id = models.AutoField(db_column='gym_id', primary_key=True)
     name = models.CharField(db_column='name', max_length=30, null=False)
@@ -184,7 +185,7 @@ class GymList(models.Model):
     def __str__(self):
         return self.name
 
-
+#應該要被刪掉 先留著一下
 class GymRecord(models.Model):
     gr_id = models.AutoField(db_column='gr_id', primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', null=False)
@@ -215,7 +216,8 @@ class TrainRecord(models.Model):
     rep = models.IntegerField(db_column='rep', null=False)
     weight = models.FloatField(db_column='weight', null=False)
     train_set = models.IntegerField(db_column='train_set', null=False)
-    gr_id = models.ForeignKey(GymRecord, on_delete=models.CASCADE, db_column='gr_id')
+    # gr_id = models.ForeignKey(GymRecord, on_delete=models.CASCADE, db_column='gr_id')
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
     item_id = models.ForeignKey(ItemList, on_delete=models.CASCADE, db_column='item_id')
 
     class Meta:
