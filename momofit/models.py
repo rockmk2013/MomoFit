@@ -76,9 +76,7 @@ class History(models.Model):
             train_first_day = None
             freq_count = None
         else:    
-            data = pd.DataFrame(list(row),columns=["train_date","user_id"])
-            data = data.drop_duplicates()
-            data['train_first_day'] = data['train_date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
+            data = pd.DataFrame(list(row),columns=["train_first_day","train_date","user_id"])
             tr_data = data[['train_first_day','train_date']].groupby(['train_first_day']).agg(['count']).reset_index()
             train_first_day = tr_data['train_first_day']
             freq_count = tr_data['train_date']['count'].tolist()
@@ -93,13 +91,10 @@ class History(models.Model):
             week_first_day = None
             success_rate = None
         else:    
-            data = pd.DataFrame(list(row),columns=["id","item_id","menu_set","menu_rep","menu_weight","date","rep","weight","train_set"])
-            data['week_first_day'] = data['date'].apply(lambda x : x - dt.timedelta(days=x.isoweekday() % 7))
-            data['menu_rep'] = data['menu_rep'].apply(lambda x : int(x))
-            data['success rate'] = (data['rep']*data['weight']*data['train_set']) / (data['menu_rep']*data['menu_weight']*data['menu_set'])
-            tr_data = data[['week_first_day','success rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
+            data = pd.DataFrame(list(row),columns=["id","item_id","success_rate","week_first_day"])
+            tr_data = data[['week_first_day','success_rate']].groupby(['week_first_day']).agg(['mean']).reset_index()
             week_first_day = tr_data['week_first_day']
-            success_rate = tr_data['success rate']['mean'].tolist()
+            success_rate = tr_data['success_rate']['mean'].tolist()
             success_rate = [ round(elem, 2) for elem in success_rate]
 
             for i, rate in enumerate(success_rate):
@@ -121,16 +116,10 @@ class History(models.Model):
             weight = None
             fat = None
         else:
-            #print(row)
-            data = pd.DataFrame(list(row),
-                                columns=["id", "weight", "fat", "date"])
-            data['week_first_day'] = data['date'].apply(lambda x: x - dt.timedelta(days=x.isoweekday() % 7))
-            tr_data = data[['week_first_day', 'weight', 'fat']].groupby(['week_first_day']).agg(['mean']).reset_index()
-            week_first_day = tr_data['week_first_day']
-            weight = tr_data['weight']['mean'].tolist()
-            fat = tr_data['fat']['mean'].tolist()
-            weight = [ round(elem, 2) for elem in weight]
-            fat = [ round(elem, 2) for elem in fat]
+            data = pd.DataFrame(list(row),columns=["id", "weight", "fat", "week_first_day"])
+            week_first_day = data['week_first_day']
+            weight = [ int(elem) for elem in data['weight'].tolist()]
+            fat = [ int(elem) for elem in data['fat'].tolist()]
         return week_first_day, weight, fat
 
 
