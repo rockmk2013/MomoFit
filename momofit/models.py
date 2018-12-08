@@ -215,13 +215,15 @@ class TrainRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set, tr.train_id from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        # cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set, tr.train_id from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        cursor.execute("select tr.train_date,item_list.item_name,tr.rep,tr.weight,tr.train_set,tr.train_id from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s order by tr.train_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s and tr.train_date=%s;",[self.id,date])
+        # cursor.execute("select tr.train_date, gym_list.name, item_list.item_name, tr.rep, tr.weight, tr.train_set from train_record as tr, item_list, gym_record, gym_list where tr.item_id=item_list.item_id and gym_record.gr_id = tr.gr_id and gym_list.gym_id=gym_record.gym_id and gym_record.user_id=%s and tr.train_date=%s;",[self.id,date])
+        cursor.execute("select tr.train_date,item_list.item_name,tr.rep,tr.weight,tr.train_set from train_record as tr,item_list where tr.item_id=item_list.item_id and tr.user_id=%s and tr.train_date=%s;",[self.id, date])
         row = cursor.fetchall()
         return row
     
@@ -231,27 +233,29 @@ class TrainRecord(models.Model):
         row = cursor.fetchall()
         return row
 
+    #應該要被刪掉 先留著一下
     def get_gym_list(self):
         cursor = connection.cursor()
         cursor.execute("select distinct gym_list.name from gym_list;")
         row = cursor.fetchall()
         return row
 
-    def add_record(self, _date, _gym, _item, _rep, _weight, _train_set):
+    # def add_record(self, _date, _gym, _item, _rep, _weight, _train_set):
+    def add_record(self, _date, _item, _rep, _weight, _train_set):
         ### without sp
         cursor = connection.cursor()
-        # add gym_record
-        cursor.execute("select gym_id from gym_list where gym_list.name=%s;",[_gym])
-        _gym_id = cursor.fetchall()
-        cursor.execute("insert into gym_record (user_id, gym_id) values (%s,%s);",[self.id, _gym_id])
+        ## add gym_record
+        # cursor.execute("select gym_id from gym_list where gym_list.name=%s;",[_gym])
+        # _gym_id = cursor.fetchall()
+        # cursor.execute("insert into gym_record (user_id, gym_id) values (%s,%s);",[self.id, _gym_id])
         
         # add train_record
         cursor.execute("select item_id from item_list where item_list.item_name=%s;",[_item])
         _item_id = cursor.fetchall()
-        cursor.execute("select gr_id from gym_record order by gr_id desc limit 0,1;")
-        _gr_id = cursor.fetchall()
-        
-        cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
+        #cursor.execute("select gr_id from gym_record order by gr_id desc limit 0,1;")
+        #_gr_id = cursor.fetchall()
+        # cursor.execute("insert into train_record (train_date,rep,weight,train_set,gr_id,item_id) values (%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_gr_id,_item_id])
+        cursor.execute("insert into train_record (train_date,rep,weight,train_set,item_id,user_id values (%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_item_id,self.id]) 
 
     def delete_train_record(self,_train_id):
         cursor = connection.cursor()
