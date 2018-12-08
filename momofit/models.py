@@ -176,7 +176,7 @@ class TrainRecord(models.Model):
     train_date = models.DateField(db_column='train_date', null=False)
     rep = models.IntegerField(db_column='rep', null=False)
     weight = models.FloatField(db_column='weight', null=False)
-    train_set = models.IntegerField(db_column='train_set', null=False)
+    train_set = models.IntegerField(db_column='set', null=False)
     gym_name = models.CharField(db_column='gym_name', max_length=30, null=False)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
     item_id = models.ForeignKey(ItemList, on_delete=models.CASCADE, db_column='item_id')
@@ -186,13 +186,13 @@ class TrainRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date,tr.gym_name,item.item_name,tr.rep,tr.weight,tr.train_set,tr.train_id from train_record as tr,item where tr.item_id=item.item_id and tr.user_id=%s order by tr.train_date desc limit 7;",[self.id])
+        cursor.execute("select tr.train_date,tr.gym_name,item.item_name,tr.rep,tr.weight,tr.set,tr.train_id from train_record as tr,item where tr.item_id=item.item_id and tr.user_id=%s order by tr.train_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select tr.train_date,tr.gym_name,item.item_name,tr.rep,tr.weight,tr.train_set from train_record as tr,item where tr.item_id=item.item_id and tr.user_id=%s and tr.train_date=%s;",[self.id, date])
+        cursor.execute("select tr.train_date,tr.gym_name,item.item_name,tr.rep,tr.weight,tr.set from train_record as tr,item where tr.item_id=item.item_id and tr.user_id=%s and tr.train_date=%s;",[self.id, date])
         row = cursor.fetchall()
         return row
     
@@ -202,9 +202,9 @@ class TrainRecord(models.Model):
         row = cursor.fetchall()
         return row
 
-    def add_record(self, _date, _gym, _item, _rep, _weight, _train_set):
+    def add_record(self, _date, _gym, _item, _rep, _weight, _set):
         cursor = connection.cursor()
-        cursor.execute("insert into train_record (train_date,rep,weight,train_set,item_id,user_id,gym_name) values (%s,%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_train_set,_item,self.id, _gym]) 
+        cursor.execute("insert into train_record (train_date,rep,weight,set,item_id,user_id,gym_name) values (%s,%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_set,_item,self.id, _gym]) 
 
     def delete_train_record(self,_train_id):
         cursor = connection.cursor()
