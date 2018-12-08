@@ -7,8 +7,8 @@
         <button type="submit" class="btn waves-effect btn-right s1"><i class="material-icons">search</i></button>
     </form>
     <div class="record"><a class="btn-floating btn waves-effect waves-light modal-trigger btn-add" href="#modal-train_record"><i class="material-icons">add</i></a>
-        {% if date %}
-        <h5>{{date}}</h5>
+        {% if search_date %}
+        <h5>{{search_date}}的紀錄</h5>
         {% else %}
         <h5>最近七次</h5>
         {% endif %}
@@ -16,7 +16,7 @@
             <thead>
                 <tr>
                     <th>日期</th>
-                    <!-- <th>健身房</th> -->
+                    <th>健身房</th>
                     <th>項目</th>
                     <th>次數/組</th>
                     <th>重量</th>
@@ -33,18 +33,13 @@
                         <td>{{date.2}}</td>
                         <td>{{date.3}}</td>
                         <td>{{date.4}}</td>
-                        <!-- <td>{{date.5}}</td> -->
+                        <td>{{date.5}}</td>
                         <td>
-                            <button name="delete" id="delete" value="{{date.5}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
+                            <button name="delete" id="delete" value="{{date.6}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
                                 <i class="material-icons">delete</i>
                             </button>
                         </td>
                     </form>                    
-                    <!-- <td>
-                        <span class="btn-floating btn waves-effect waves-light btn-right delete-menu-btn">
-                            <i class="material-icons">delete</i>
-                        </span>
-                    </td> -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -58,19 +53,13 @@
             <form name="add_train" id="add_train" action="/momofit/train_record/" method="POST">
                 {% csrf_token %}
                 <h6>日期</h6>
-                <input type="text" name="select_date" id="select_date" class="datepicker">
+                <input type="text" name="select_date" id="select_date" class="datepicker-today">
                 <h6>健身房</h6>
-                <select name="select_gym" type="text">
-                    <option value="0" disabled selected>gym</option>
-                    {% for gym in gym_list %}
-                    <option value="{{gym.0}}">{{gym.0}}</option>
-                    {% endfor %}
-                </select>
+                <input type="text" name="select_gym" required>
                 <h6>動作</h6>
                 <select name="select_item" type="text">
-                    <option value="0" disabled selected>movement</option>
                     {% for item in item_list %}
-                    <option value="{{item.0}}">{{item.0}}</option>
+                    <option value="{{item.0}}">{{item.1}}</option>
                     {% endfor %}
                 </select>
                 <h6>次數/組</h6>
@@ -79,12 +68,11 @@
                 <input type="text" name="select_weight" value="30">
                 <h6>組數</h6>
                 <select name="select_train_set" >
-                    <option value="0" disabled selected>number of set</option>
                     {% for n in train_set %}
                     <option value="{{n}}">{{n}}</option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="btn waves-effect btn-right">新增</button> 
+                <button type="submit" class="btn waves-effect btn-right btn-margin-bottom">新增</button> 
             </form>
         </div>
     </div>

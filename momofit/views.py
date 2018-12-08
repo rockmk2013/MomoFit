@@ -122,7 +122,7 @@ def Hello_momo(request):
 
 @login_required(login_url='/') 
 def Menu_page(request):    
-    if request.method == 'POST':#insert to menu,insert to menu_item
+    if request.method == 'POST':
         menu_form = MenuForm(request.POST)
         items_id = request.POST.getlist('items')
         Menu.add_menu_item(items_id)
@@ -137,7 +137,6 @@ def Menu_page(request):
         context={'menu_form':menu_form,'item_none':item_none,'menu_items':menu_items}
     return render(request, 'menu.html', context=context)
 
-# @login_required(login_url='/')
 @csrf_exempt
 def delete_menu(request):
     a = {"result":"post_success"}
@@ -149,8 +148,8 @@ def Train_record(request):
     # GET
     record = TrainRecord.get_record(request.user)
     item_list = TrainRecord.get_item_list(request.user)
-    gym_list = TrainRecord.get_gym_list(request.user)
     train_set = range(1,11)
+    date = None
     # search
     try:
         date = request.GET['mydate']
@@ -159,8 +158,8 @@ def Train_record(request):
         pass
     context = {'record':record,
                 'item_list':item_list,
-                'gym_list':gym_list,
-                'train_set':train_set}
+                'train_set':train_set,
+                'search_date':date}
     if 'delete' in request.GET:
         _train_id = request.GET['delete']
         TrainRecord.delete_train_record(request.user, _train_id)
@@ -190,8 +189,8 @@ def Food_record(request):
     list = [i for i in list]
     store_list = set([i[0] for i in list])
     food_list = set(i[1] for i in list)
-    quantity = range(7)
-
+    quantity = range(1,6)
+    date=None
     food_dict = {}
     for s in list:
         if s[0] in food_dict:
@@ -209,7 +208,8 @@ def Food_record(request):
                 'store_list':store_list,
                 'food_list':food_list,
                 'quantity':quantity,
-                'food_dict':food_dict
+                'food_dict':food_dict,
+                'search_date':date
                 }
     if 'delete' in request.GET:
         _fr_id = request.GET['delete']
@@ -226,9 +226,3 @@ def Food_record(request):
         context['record'] = record
 
     return render(request, 'food_record.html', context=context)
-
-@csrf_exempt
-def delete_food(request):
-    a = {"result":"post_success"}
-    FoodRecord.delete_food_record(request.POST['food-record-id'])
-    return HttpResponse(json.dumps(a), content_type='application/json')

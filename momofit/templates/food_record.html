@@ -7,8 +7,8 @@
         <span class="col s1"><button type="submit" value="submit" name='submit-btn' class="btn waves-effect btn-right"><i class="material-icons">search</i></button></span>
     </form>
     <div class="record"><a class="btn-floating btn waves-effect waves-light modal-trigger btn-add" href="#modal-food_record"><i class="material-icons">add</i></a>
-        {% if date %}
-        <h5>{{date}}</h5>
+        {% if search_date %}
+        <h5>{{search_date}}</h5>
         {% else %}
         <h5>最近七餐</h5>
         {% endif %}
@@ -29,7 +29,7 @@
                 <tr>
                     <form action="/momofit/food_record/" method="GET">
                     <td>{{date.0}}</td>
-                    <td>{{date.1}}</td>
+                    <td>{{date.1}}<span class="mute">({{date.6}})</span></td>
                     <td>{{date.2}}</td>
                     <td>{{date.3}}</td>
                     <td>{{date.4}}</td>
@@ -37,11 +37,6 @@
                     <button name="delete" id="delete" value="{{date.5}}" type="submit" class="btn-floating btn waves-effect waves-light btn-right delete-record-btn"><i class="material-icons">delete</i></button>
                     </form>    
                     </td>
-                    <!--
-                    <span class="btn-floating btn waves-effect waves-light btn-right delete-record-btn">
-                        <i class="material-icons">delete</i>
-                    </span>
-                    -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -54,55 +49,30 @@
             
             <form name="add_food" action="/momofit/food_record/" method="POST">
             {% csrf_token %}
-            <h6>日期</h6>
-            <input type="text" name="select_date" class="datepicker">
-            <h6>店家</h6>
-            <select name="select_store">
-                <option value="0" disabled selected>store</option>
-                {% for store in store_list %}
-                <option value="{{store}}">{{ store }}</option>
-                {% endfor %}
-            </select>
-            <h6>餐點</h6>
-            <select name="select_food">
-                <option value="0" disabled selected>food</option>
-                {% for food in food_list %}
-                <option value="{{food}}">{{food}}</option>
-                {% endfor %}
-            </select>
-            <h6>數量</h6>
-            <select name="select_quantity">
-            <option value="0" disabled selected>quantity</option>
-            {% for i in quantity %}
-            <option value={{i}}>{{i}}</option>
-            {% endfor %}
-            </select>
-            <button type="submit" class="btn waves-effect btn-right">新增</button>
+                <h6>日期</h6>
+                <input type="text" name="select_date" class="datepicker-today">
+                <h6>店家</h6>
+                <select name="select_store">
+                    {% for store in store_list %}
+                    <option value="{{store}}">{{ store }}</option>
+                    {% endfor %}
+                </select>
+                <h6>餐點</h6>
+                <select name="select_food">
+                    {% for food in food_list %}
+                    <option value="{{food}}">{{food}}</option>
+                    {% endfor %}
+                </select>
+                <h6>數量</h6>
+                <select name="select_quantity">
+                    {% for i in quantity %}
+                    <option value={{i}}>{{i}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn waves-effect btn-right btn-margin-bottom">新增</button>
             </form>
-            
+ 
         </div>
     </div>
 </div>
-<!-- <script>
-        $(".delete-record-btn").on('click',function(){
-            var td = $(this);
-            $.ajax({
-                type:"POST",
-                url:"/momofit/delete_food/",
-                data: {
-                    'food-record-id': $(this).data().id
-                    },
-                dataType:'json',
-                success: function(result){
-                    td.parent().parent().fadeOut( 500, function() {
-                        $(this).remove();
-                    });
-                },
-                error: function(e){
-                    console.log(e)
-                }
-            });
-            return false;
-        });
-    </script> -->
 {% endblock %}
