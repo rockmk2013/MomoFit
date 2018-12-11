@@ -25,12 +25,12 @@ class User(AbstractUser):
 class History(models.Model):
     height = models.IntegerField(verbose_name="身高(cm)")
     weight = models.IntegerField(verbose_name="體重(kg)")
-    fat = models.FloatField(verbose_name="體脂率(%)",null=True)
+    fat = models.FloatField(verbose_name="體脂率(%)",default=25)
     push_pr = models.IntegerField(verbose_name="胸推個人紀錄(kg)",default=15)
     squat_pr = models.IntegerField(verbose_name="深蹲個人紀錄(kg)",default=15)
     lift_pr = models.IntegerField(verbose_name="硬舉個人紀錄(kg)",default=15)
     tdee = models.IntegerField(default=1200)
-    date = models.DateTimeField(auto_now_add=True,null=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     actlevel_status = (
         (1,'久坐'),
@@ -45,7 +45,7 @@ class History(models.Model):
         default=1, 
         verbose_name="個人活動量"
     )
-    user= models.ForeignKey(User, on_delete=models.CASCADE,null=True,db_column='user_id')
+    user= models.ForeignKey(User, on_delete=models.CASCADE,db_column='user_id')
     
     class Meta:
         db_table = 'history'   
@@ -163,7 +163,7 @@ class Menu(models.Model):
 class ItemList(models.Model):
     item_id = models.AutoField(db_column='item_id', primary_key=True)
     item_name = models.CharField(db_column='item_name', max_length=30, null=False)
-    item_type = models.CharField(db_column='item_type', max_length=30, null=False)
+    item_type = models.CharField(db_column='item_type', max_length=2, null=False)
 
     class Meta:
         db_table = 'item'
@@ -175,7 +175,7 @@ class TrainRecord(models.Model):
     train_id = models.AutoField(db_column='train_id', primary_key=True)
     train_date = models.DateField(db_column='train_date', null=False)
     rep = models.IntegerField(db_column='rep', null=False)
-    weight = models.FloatField(db_column='weight', null=False)
+    weight = models.IntegerField(db_column='weight', null=False)
     train_set = models.IntegerField(db_column='set', null=False)
     gym_name = models.CharField(db_column='gym_name', max_length=30, null=False)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
@@ -204,7 +204,7 @@ class TrainRecord(models.Model):
 
     def add_record(self, _date, _gym, _item, _rep, _weight, _set):
         cursor = connection.cursor()
-        cursor.execute("insert into train_record (train_date,rep,weight,set,item_id,user_id,gym_name) values (%s,%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_set,_item,self.id, _gym]) 
+        cursor.execute("insert into train_record (train_date,rep,weight,`set`,item_id,user_id,gym_name) values (%s,%s,%s,%s,%s,%s,%s);",[_date,_rep,_weight,_set,_item,self.id, _gym]) 
 
     def delete_train_record(self,_train_id):
         cursor = connection.cursor()
@@ -249,7 +249,7 @@ class FoodRecord(models.Model):
 
     def get_record(self):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal,fr.food_id,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and store.store_id=fi.store_id and fr.user_id=%s order by fr.fr_date desc limit 7;",[self.id])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal*fr.quantity,fr.food_id,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and store.store_id=fi.store_id and fr.user_id=%s order by fr.fr_date desc limit 7;",[self.id])
         row = cursor.fetchall()
         return row
 
@@ -261,7 +261,7 @@ class FoodRecord(models.Model):
 
     def search(self,date):
         cursor = connection.cursor()
-        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and fr.user_id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
+        cursor.execute("select fr.fr_date,store.store_name,fi.food_name,fr.quantity,fi.kcal*fr.quantity,fr.food_id,store.address from food as fr,food_detail as fi,store where fi.food_detail_id=fr.food_detail_id and fr.user_id=%s and store.store_id=fi.store_id and fr.fr_date=%s;",[self.id,date])
         row = cursor.fetchall()
         return row
 
